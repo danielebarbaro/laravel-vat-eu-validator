@@ -1,0 +1,62 @@
+{
+    "name": "danielebarbaro/laravel-vat-eu-validator",
+    "description": "A simple package that validates EU VAT numbers against the central ec.europa.eu database",
+    "keywords": [
+        "danielebarbaro",
+        "laravel-vat-eu-validator",
+        "vat-eu-validator",
+        "vat-validator",
+        "laravel-vat-validator",
+        "laravel",
+        "vat",
+        "laravel-validator"
+    ],
+    "homepage": "https://github.com/danielebarbaro/laravel-vat-eu-validator",
+    "license": "MIT License (MIT)",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Daniele Barbaro",
+            "email": "barbaro.daniele@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-soap": "*",
+        "illuminate/support": "5.7.*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "3.7.*",
+        "phpunit/phpunit": "^7.0",
+        "squizlabs/php_codesniffer": "^3.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Danielebarbaro\\LaravelVatEuValidator\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Danielebarbaro\\LaravelVatEuValidator\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Danielebarbaro\\LaravelVatEuValidator\\VatValidatorServiceProvider"
+            ],
+            "aliases": {
+                "VatValidator": "Danielebarbaro\\LaravelVatEuValidator\\Facades\\VatValidatorFacade"
+            }
+        }
+    }
+}
