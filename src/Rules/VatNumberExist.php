@@ -2,7 +2,7 @@
 
 namespace Danielebarbaro\LaravelVatEuValidator\Rules;
 
-use Danielebarbaro\LaravelVatEuValidator\VatValidator;
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
 use Illuminate\Contracts\Validation\Rule;
 
 class VatNumberExist implements Rule
@@ -13,7 +13,6 @@ class VatNumberExist implements Rule
      * @param  string $attribute
      * @param  mixed $value
      * @return bool
-     * @throws \Danielebarbaro\LaravelVatEuValidator\Vies\ViesException
      */
     public function passes($attribute, $value)
     {

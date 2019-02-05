@@ -7,6 +7,7 @@ use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Container\Container;
 
 class VatValidatorServiceProvider extends ServiceProvider
 {
@@ -45,7 +46,7 @@ class VatValidatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(VatValidator::class, function () {
+        $this->app->singleton(VatValidator::class, function (Container $app) {
             return new VatValidator();
         });
     }

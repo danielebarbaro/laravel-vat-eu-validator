@@ -45,7 +45,7 @@ class Client
     public function check(string $countryCode, string $vatNumber): bool
     {
         try {
-            $response = $this->getSoapClient()->checkVat(
+            $response = $this->getClient()->checkVat(
                 array(
                     'countryCode' => $countryCode,
                     'vatNumber' => $vatNumber
@@ -62,7 +62,7 @@ class Client
      * Create SoapClient
      * @return SoapClient
      */
-    protected function getSoapClient(): SoapClient
+    protected function getClient(): SoapClient
     {
         if ($this->client === null) {
             $this->client = new SoapClient(self::URL, ['connection_timeout' => $this->timeout]);
