@@ -12,7 +12,7 @@
         "laravel-validator"
     ],
     "homepage": "https://github.com/danielebarbaro/laravel-vat-eu-validator",
-    "license": "MIT License (MIT)",
+    "license": "MIT",
     "type": "library",
     "authors": [
         {
