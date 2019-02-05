@@ -1,4 +1,5 @@
-# Very short description of the package
+Laravel VAT EU VALIDATOR
+================
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 [![Build Status](https://img.shields.io/travis/danielebarbaro/laravel-vat-eu-validator/master.svg?style=flat-square)](https://travis-ci.org/danielebarbaro/laravel-vat-eu-validator)
@@ -6,6 +7,8 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 
 This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php)  to validate a VAT number for businesses based in Europe.
+
 
 ## Installation
 
@@ -15,10 +18,74 @@ You can install the package via composer:
 composer require danielebarbaro/laravel-vat-eu-validator
 ```
 
+The package will automatically register itself.
+
 ## Usage
 
-``` php
-// Usage description here
+```php
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
+
+// Check VAT format and VIES existence
+VatValidator::validate('IT12345');
+
+// Check VAT format
+VatValidator::validateFormat('IT12345678901'); 
+
+// Check VAT existence
+VatValidator::validateExistence('IT12345678901');
+
+```
+
+
+#### Validation
+
+The package registers two new validation rules.
+
+**vat_number**
+
+The field under validation must be a valid and existing VAT number.
+
+**vat_number_exist**
+
+The field under validation check id is an existing VAT number.
+
+**vat_number_format**
+
+The field under validation must be a valid VAT number.
+
+```php
+use Illuminate\Http\Request;
+
+class Controller {
+
+    public function foo(Request $request) 
+    {
+        $request->validate([
+            'bar_field' => ['vat_number'],
+            'bar_field' => ['vat_number_exist'],
+            'bar_field' => ['vat_number_format'],
+        ]);
+    }
+}
+```
+
+Alternatively, you can also use the `Rule` directly.
+
+```php
+use Illuminate\Http\Request;
+use Danielebarbaro\LaravelVatEuValidator\Rules;
+
+class Controller {
+
+    public function foo(Request $request) 
+    {
+        $request->validate([
+            'bar_field' => [ new Rules\VatNumber() ],
+            'bar_field' => [ new Rules\VatNumberExist() ],
+            'bar_field' => [ new Rules\VatNumberFormat() ],
+        ]);
+    }
+}
 ```
 
 ### Testing
