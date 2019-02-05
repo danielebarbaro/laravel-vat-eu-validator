@@ -5,9 +5,6 @@ namespace Danielebarbaro\LaravelVatEuValidator\Facades;
 use Danielebarbaro\LaravelVatEuValidator\VatValidator;
 use Illuminate\Support\Facades\Facade;
 
-/**
- * @see \Danielebarbaro\LaravelVatEuValidator\Skeleton\SkeletonClass
- */
 class VatValidatorFacade extends Facade
 {
     /**

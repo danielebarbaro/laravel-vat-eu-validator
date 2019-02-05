@@ -43,8 +43,9 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "cs-check": "vendor/bin/phpcs",
+        "cs-fix": "vendor/bin/phpcbf"
     },
     "config": {
         "sort-packages": true
