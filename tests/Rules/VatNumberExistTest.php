@@ -23,4 +23,12 @@ class VatNumberExistTest extends TestCase
     {
         self::assertFalse($this->rule->passes('vat_number_exist', $this->fake_vat));
     }
+
+    public function testSuccessVatNumberFormatExistMessage()
+    {
+        self::assertStringContainsString(
+            'The :attribute must be write in a valid number format {country_name}{vat_number}.',
+            $this->rule->message()
+        );
+    }
 }

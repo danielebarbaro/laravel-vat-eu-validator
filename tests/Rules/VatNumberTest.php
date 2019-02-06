@@ -23,4 +23,9 @@ class VatNumberTest extends TestCase
     {
         self::assertFalse($this->rule->passes('vat_number', $this->fake_vat));
     }
+
+    public function testSuccessVatNumberMessage()
+    {
+        self::assertStringContainsString('The :attribute must be a valid VAT number.', $this->rule->message());
+    }
 }

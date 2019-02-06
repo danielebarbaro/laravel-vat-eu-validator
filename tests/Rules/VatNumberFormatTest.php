@@ -28,4 +28,9 @@ class VatNumberFormatTest extends TestCase
     {
         self::assertFalse($this->rule->passes('vat_number_format', 'foo'));
     }
+
+    public function testFailVatNumberFormatMessage()
+    {
+        self::assertStringContainsString('VAT number :attribute  not exist.', $this->rule->message());
+    }
 }

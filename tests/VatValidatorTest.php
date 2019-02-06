@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class VatValidatorTest extends TestCase
 {
-
     protected $validator;
 
     protected $fake_vat;
@@ -43,8 +42,10 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateExistence($this->fake_vat));
     }
 
-    public function testVatValide()
+    public function testVatValid()
     {
         self::assertFalse($this->validator->validate($this->fake_vat));
     }
+
+
 }
