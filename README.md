@@ -3,11 +3,9 @@ Laravel VAT EU VALIDATOR
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 [![Build Status](https://img.shields.io/travis/danielebarbaro/laravel-vat-eu-validator/master.svg?style=flat-square)](https://travis-ci.org/danielebarbaro/laravel-vat-eu-validator)
-[![Quality Score](https://img.shields.io/scrutinizer/g/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://scrutinizer-ci.com/g/danielebarbaro/laravel-vat-eu-validator)
 [![Total Downloads](https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
-laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php)  to validate a VAT number for businesses based in Europe.
+laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
 
 ## Installation
@@ -62,9 +60,15 @@ class Controller {
     {
         $request->validate([
             'bar_field' => ['vat_number'],
-            'bar_field' => ['vat_number_exist'],
-            'bar_field' => ['vat_number_format'],
         ]);
+        
+        $request->validate([
+            'bar_field' => ['vat_number_exist'],
+        ]);
+        
+        $request->validate([
+               'bar_field' => ['vat_number_format'],
+       ]);
     }
 }
 ```
