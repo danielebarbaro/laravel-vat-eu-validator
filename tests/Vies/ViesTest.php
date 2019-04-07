@@ -13,34 +13,28 @@ class ViesTest extends TestCase
 
     protected $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->client = new Client();
     }
 
-    /**
-     * @expectedException \Danielebarbaro\LaravelVatEuValidator\Vies\ViesException
-     */
     public function testClientEmptyDataException()
     {
+        $this->expectException(\Danielebarbaro\LaravelVatEuValidator\Vies\ViesException::class);
         $this->client->check('', '');
     }
 
-    /**
-     * @expectedException \Danielebarbaro\LaravelVatEuValidator\Vies\ViesException
-     */
     public function testClientEmptyVatNumberException()
     {
+        $this->expectException(\Danielebarbaro\LaravelVatEuValidator\Vies\ViesException::class);
         $this->client->check('IT', '');
     }
 
-    /**
-     * @expectedException \Danielebarbaro\LaravelVatEuValidator\Vies\ViesException
-     */
     public function testClientEmptyCountryException()
     {
+        $this->expectException(\Danielebarbaro\LaravelVatEuValidator\Vies\ViesException::class);
         $this->client->check('', '12345');
     }
 
