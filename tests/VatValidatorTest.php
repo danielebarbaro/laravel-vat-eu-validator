@@ -11,7 +11,7 @@ class VatValidatorTest extends TestCase
 
     protected $fake_vat;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
