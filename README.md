@@ -123,6 +123,8 @@ If you discover any security related issues, please email barbaro.daniele@gmail.
 ## Credits
 
 - [Daniele Barbaro](https://github.com/danielebarbaro)
+- [Alessio Nobile](https://github.com/alessionobile)
+- [Javier Núñez](https://github.com/javiernunez)
 - [All Contributors](../../contributors)
 
 ## License
