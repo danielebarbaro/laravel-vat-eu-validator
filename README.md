@@ -67,7 +67,7 @@ class Controller {
         ]);
         
         $request->validate([
-               'bar_field' => ['vat_number_format'],
+            'bar_field' => ['vat_number_format'],
        ]);
     }
 }
@@ -90,6 +90,16 @@ class Controller {
         ]);
     }
 }
+```
+
+### Translations
+Just add and customize validation strings in `resources/lang/en/validation.php`
+```
+    ...
+    'vat_number' => 'The :attribute must be a valid VAT number.',
+    'vat_number_format' => 'The :attribute must be write in a valid number format {country_name}{vat_number}.',
+    'vat_number_exist' => 'VAT number :attribute  not exist.',
+    ...
 ```
 
 ### Testing

@@ -26,6 +26,6 @@ class VatNumberFormat implements Rule
      */
     public function message()
     {
-        return 'VAT number :attribute  not exist.';
+        return __('VAT number :attribute  not exist.');
     }
 }

@@ -26,6 +26,6 @@ class VatNumberExist implements Rule
      */
     public function message()
     {
-        return 'The :attribute must be write in a valid number format {country_name}{vat_number}.';
+        return __('The :attribute must be write in a valid number format {country_name}{vat_number}.');
     }
 }
