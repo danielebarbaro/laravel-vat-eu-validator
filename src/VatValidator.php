@@ -87,8 +87,12 @@ class VatValidator
     public function validateExistence(string $vatNumber): bool
     {
         $vatNumber = $this->vatCleaner($vatNumber);
-        list($country, $number) = $this->splitVat($vatNumber);
-        return $this->client->check($country, $number);
+        $result = $this->validateFormat($vatNumber);
+        if ($result) {
+            list($country, $number) = $this->splitVat($vatNumber);
+            $result = $this->client->check($country, $number);
+        }
+        return $result;
     }
 
     /**
