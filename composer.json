@@ -24,7 +24,7 @@
     "require": {
         "php": "^7.1",
         "ext-soap": "*",
-        "illuminate/contracts": ">=5.0|6.*|7.*",
+        "illuminate/contracts": "5.*|6.*|7.*",
         "illuminate/support": "5.*|6.*|7.*"
     },
     "require-dev": {
