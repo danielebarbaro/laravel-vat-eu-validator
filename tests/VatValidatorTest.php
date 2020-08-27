@@ -19,9 +19,14 @@ class VatValidatorTest extends TestCase
         $this->fake_vat = 'IT12345678901';
     }
 
+    public function testVatValidFormatFail()
+    {
+        self::assertFalse($this->validator->validateFormat($this->fake_vat));
+    }
+
     public function testVatValidFormat()
     {
-        self::assertTrue($this->validator->validateFormat($this->fake_vat));
+        self::assertTrue($this->validator->validateFormat('IT10648200011'));
     }
 
     public function testVatWrongFormat()
@@ -47,5 +52,10 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validate($this->fake_vat));
     }
 
+    public function testLuhnCheck(): void
+    {
+        self::assertIsInt($this->validator->luhnCheck($this->fake_vat));
+        self::assertNotEquals($this->validator->luhnCheck($this->fake_vat), 0);
+    }
 
 }

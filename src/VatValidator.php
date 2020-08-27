@@ -75,7 +75,14 @@ class VatValidator
             return false;
         }
 
-        return preg_match('/^' . self::$pattern_expression[$country] . '$/', $number) > 0;
+        $validate_rule = preg_match('/^' . self::$pattern_expression[$country] . '$/', $number) > 0;
+
+        if ($validate_rule === true && $country === 'IT') {
+            $result = self::luhnCheck($number);
+            return $result % 10 == 0 ? true : false;
+        }
+
+        return $validate_rule;
     }
 
     /**
@@ -93,6 +100,30 @@ class VatValidator
             $result = $this->client->check($country, $number);
         }
         return $result;
+    }
+
+    /**
+     * A php implementation of Luhn Algo
+     *
+     * @link https://en.wikipedia.org/wiki/Luhn_algorithm
+     * @param  string  $vat
+     * @return int
+     */
+    public static function luhnCheck(string $vat): int
+    {
+        $sum = 0;
+        $vat_array = str_split($vat);
+        for ($index = 0; $index < count($vat_array); $index++) {
+            $value = intval($vat_array[$index]);
+            if ($index % 2) {
+                $value = $value * 2;
+                if ($value > 9) {
+                    $value = 1 + ($value % 10);
+                }
+            }
+            $sum += $value;
+        }
+        return $sum;
     }
 
     /**

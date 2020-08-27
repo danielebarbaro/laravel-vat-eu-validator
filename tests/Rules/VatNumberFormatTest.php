@@ -21,7 +21,8 @@ class VatNumberFormatTest extends TestCase
 
     public function testSuccessVatNumberFormat()
     {
-        self::assertTrue($this->rule->passes('vat_number_format', $this->fake_vat));
+        self::assertFalse($this->rule->passes('vat_number_format', $this->fake_vat));
+        self::assertTrue($this->rule->passes('vat_number_format', 'IT10648200011'));
     }
 
     public function testFailVatNumberFormat()
