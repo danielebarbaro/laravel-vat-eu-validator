@@ -18,6 +18,12 @@ composer require danielebarbaro/laravel-vat-eu-validator
 
 The package will automatically register itself.
 
+### Lumen
+As Lumen doesn't auto-discover service providers, You will need to register it in ```bootstrap/app.php```:
+```
+$app->register(Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider::class);
+```
+
 ## Usage
 
 ```php
