@@ -12,7 +12,7 @@ class VatValidator
      * @var array
      * @link http://ec.europa.eu/taxation_customs/vies/faq.html?locale=en#item_11
      */
-    protected static $pattern_expression = array(
+    protected static array $pattern_expression = [
         'AT' => 'U[A-Z\d]{8}',
         'BE' => '(0\d{9}|\d{10})',
         'BG' => '\d{9,10}',
@@ -41,12 +41,12 @@ class VatValidator
         'SE' => '\d{12}',
         'SI' => '\d{8}',
         'SK' => '\d{10}'
-    );
+    ];
 
     /**
      * Vies Client.
      */
-    private $client;
+    private ?Client $client;
 
     /**
      * VatValidator constructor.
@@ -79,7 +79,7 @@ class VatValidator
 
         if ($validate_rule === true && $country === 'IT') {
             $result = self::luhnCheck($number);
-            return $result % 10 == 0 ? true : false;
+            return $result % 10 == 0;
         }
 
         return $validate_rule;
@@ -159,5 +159,4 @@ class VatValidator
             substr($vatNumber, 2)
         ];
     }
-
 }

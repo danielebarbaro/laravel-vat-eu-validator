@@ -14,7 +14,7 @@ class VatNumberFormat implements Rule
      * @param  mixed $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return VatValidator::validateFormat($value);
     }
@@ -24,7 +24,7 @@ class VatNumberFormat implements Rule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
         return __('VAT number :attribute  not exist.');
     }
