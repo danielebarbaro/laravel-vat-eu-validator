@@ -45,10 +45,10 @@ class Client
     {
         try {
             $response = $this->getClient()->checkVat(
-                array(
+                [
                     'countryCode' => $countryCode,
-                    'vatNumber' => $vatNumber
-                )
+                    'vatNumber' => $vatNumber,
+                ]
             );
         } catch (SoapFault $e) {
             throw new ViesException($e->getMessage(), $e->getCode());
