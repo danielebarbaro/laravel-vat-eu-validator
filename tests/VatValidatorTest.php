@@ -7,9 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 class VatValidatorTest extends TestCase
 {
-    protected $validator;
+    protected VatValidator $validator;
 
-    protected $fake_vat;
+    protected string $fake_vat;
 
     public function setUp(): void
     {
@@ -55,6 +55,6 @@ class VatValidatorTest extends TestCase
     public function testLuhnCheck(): void
     {
         self::assertIsInt($this->validator->luhnCheck($this->fake_vat));
-        self::assertNotEquals($this->validator->luhnCheck($this->fake_vat), 0);
+        self::assertNotEquals(0, $this->validator->luhnCheck($this->fake_vat));
     }
 }

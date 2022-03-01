@@ -3,15 +3,12 @@
 namespace Danielebarbaro\LaravelVatEuValidator\Tests\Vies;
 
 use Danielebarbaro\LaravelVatEuValidator\Vies\Client;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesException;
 use PHPUnit\Framework\TestCase;
-use SoapClient;
-use SoapFault;
 
 class ViesTest extends TestCase
 {
-    protected $validator;
-
-    protected $client;
+    protected Client $client;
 
     public function setUp(): void
     {
@@ -22,19 +19,19 @@ class ViesTest extends TestCase
 
     public function testClientEmptyDataException()
     {
-        $this->expectException(\Danielebarbaro\LaravelVatEuValidator\Vies\ViesException::class);
+        $this->expectException(ViesException::class);
         $this->client->check('', '');
     }
 
     public function testClientEmptyVatNumberException()
     {
-        $this->expectException(\Danielebarbaro\LaravelVatEuValidator\Vies\ViesException::class);
+        $this->expectException(ViesException::class);
         $this->client->check('IT', '');
     }
 
     public function testClientEmptyCountryException()
     {
-        $this->expectException(\Danielebarbaro\LaravelVatEuValidator\Vies\ViesException::class);
+        $this->expectException(ViesException::class);
         $this->client->check('', '12345');
     }
 
