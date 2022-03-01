@@ -40,7 +40,7 @@ class VatValidator
         'RO' => '\d{2,10}',
         'SE' => '\d{12}',
         'SI' => '\d{8}',
-        'SK' => '\d{10}'
+        'SK' => '\d{10}',
     ];
 
     /**
@@ -56,7 +56,7 @@ class VatValidator
     {
         $this->client = $client;
 
-        if (!$this->client) {
+        if (! $this->client) {
             $this->client = new Client();
         }
     }
@@ -64,14 +64,14 @@ class VatValidator
     /**
      * Validate a VAT number format.
      * @param string $vatNumber
-     * @return boolean
+     * @return bool
      */
     public function validateFormat(string $vatNumber): bool
     {
         $vatNumber = $this->vatCleaner($vatNumber);
         list($country, $number) = $this->splitVat($vatNumber);
 
-        if (!isset(self::$pattern_expression[$country])) {
+        if (! isset(self::$pattern_expression[$country])) {
             return false;
         }
 
@@ -79,6 +79,7 @@ class VatValidator
 
         if ($validate_rule === true && $country === 'IT') {
             $result = self::luhnCheck($number);
+
             return $result % 10 == 0;
         }
 
@@ -88,7 +89,7 @@ class VatValidator
     /**
      * Check existence VAT number
      * @param string $vatNumber
-     * @return boolean
+     * @return bool
      * @throws Vies\ViesException
      */
     public function validateExistence(string $vatNumber): bool
@@ -99,6 +100,7 @@ class VatValidator
             list($country, $number) = $this->splitVat($vatNumber);
             $result = $this->client->check($country, $number);
         }
+
         return $result;
     }
 
@@ -123,6 +125,7 @@ class VatValidator
             }
             $sum += $value;
         }
+
         return $sum;
     }
 
@@ -130,7 +133,7 @@ class VatValidator
      * Validates a VAT number .
      *
      * @param string $vatNumber Either the full VAT number (incl. country).
-     * @return boolean
+     * @return bool
      * @throws Vies\ViesException
      */
     public function validate(string $vatNumber): bool
@@ -145,6 +148,7 @@ class VatValidator
     private function vatCleaner(string $vatNumber): string
     {
         $vatNumber_no_spaces = trim($vatNumber);
+
         return strtoupper($vatNumber_no_spaces);
     }
 
@@ -156,7 +160,7 @@ class VatValidator
     {
         return [
             substr($vatNumber, 0, 2),
-            substr($vatNumber, 2)
+            substr($vatNumber, 2),
         ];
     }
 }

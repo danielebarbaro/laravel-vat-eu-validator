@@ -35,7 +35,7 @@ class VatValidatorTest extends TestCase
             '',
             'IT1234567890',
             'IT12345',
-            'foobar123'
+            'foobar123',
         ];
         foreach ($vat_numbers as $vat) {
             self::assertFalse($this->validator->validateFormat($vat));

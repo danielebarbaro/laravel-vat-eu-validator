@@ -5,9 +5,9 @@ namespace Danielebarbaro\LaravelVatEuValidator;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider;
 
 class VatValidatorServiceProvider extends ServiceProvider
 {
@@ -21,6 +21,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number', function ($attribute, $value, $parameters, $validator) {
             $rule = new VatNumber();
+
             return $rule->passes($attribute, $value);
         });
 
@@ -29,6 +30,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number_exist', function ($attribute, $value, $parameters, $validator) {
             $rule = new VatNumberExist();
+
             return $rule->passes($attribute, $value);
         });
 
@@ -37,6 +39,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number_format', function ($attribute, $value, $parameters, $validator) {
             $rule = new VatNumberFormat();
+
             return $rule->passes($attribute, $value);
         });
     }
