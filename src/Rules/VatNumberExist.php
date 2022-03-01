@@ -14,7 +14,7 @@ class VatNumberExist implements Rule
      * @param  mixed $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return VatValidator::validateExistence($value);
     }
@@ -24,7 +24,7 @@ class VatNumberExist implements Rule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
         return __('The :attribute must be write in a valid number format {country_name}{vat_number}.');
     }

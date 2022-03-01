@@ -57,5 +57,4 @@ class VatValidatorTest extends TestCase
         self::assertIsInt($this->validator->luhnCheck($this->fake_vat));
         self::assertNotEquals($this->validator->luhnCheck($this->fake_vat), 0);
     }
-
 }

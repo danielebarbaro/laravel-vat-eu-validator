@@ -14,7 +14,7 @@ class VatNumber implements Rule
      * @param  mixed $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return VatValidator::validate($value);
     }
@@ -24,7 +24,7 @@ class VatNumber implements Rule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
         return __('The :attribute must be a valid VAT number.');
     }
