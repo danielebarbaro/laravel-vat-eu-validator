@@ -2,11 +2,13 @@ Laravel VAT EU VALIDATOR
 ================
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
-[![Build Status](https://img.shields.io/travis/danielebarbaro/laravel-vat-eu-validator/master.svg?style=flat-square)](https://travis-ci.org/danielebarbaro/laravel-vat-eu-validator)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/run-tests?label=tests)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/Check%20&%20fix%20styling?label=code%20style)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
+#### For Laravel 5,6,7 use tag 0.5.4
 
 ## Installation
 
@@ -17,12 +19,6 @@ composer require danielebarbaro/laravel-vat-eu-validator
 ```
 
 The package will automatically register itself.
-
-### Lumen
-As Lumen doesn't auto-discover service providers, You will need to register it in ```bootstrap/app.php```:
-```
-$app->register(Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider::class);
-```
 
 ## Usage
 
@@ -39,7 +35,6 @@ VatValidator::validateFormat('IT12345678901');
 VatValidator::validateExistence('IT12345678901');
 
 ```
-
 
 #### Validation
 
