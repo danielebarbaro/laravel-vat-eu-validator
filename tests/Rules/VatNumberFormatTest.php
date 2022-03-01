@@ -7,9 +7,9 @@ use Orchestra\Testbench\TestCase;
 
 class VatNumberFormatTest extends TestCase
 {
-    protected $rule;
+    protected VatNumberFormat $rule;
 
-    protected $fake_vat;
+    protected string $fake_vat;
 
     public function setUp(): void
     {
