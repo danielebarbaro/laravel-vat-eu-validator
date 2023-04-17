@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "php": "^8.1|^8.2",
+        "php": "^8.0|^8.1|^8.2",
         "ext-soap": "*",
         "illuminate/contracts": "^8.73|^9.2|^10.0",
         "illuminate/support": "^v8.83.2|^9.2|^10.0"
