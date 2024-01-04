@@ -66,7 +66,8 @@ class VatValidator
      * @param string $country
      * @return bool
      */
-    public static function countryIsSupported(string $country): bool {
+    public static function countryIsSupported(string $country): bool
+    {
         return isset(self::$pattern_expression[$country]);
     }
 
