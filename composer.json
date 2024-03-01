@@ -24,18 +24,18 @@
     "require": {
         "php": "^8.0|^8.1|^8.2",
         "ext-soap": "*",
-        "illuminate/contracts": "^8.73|^9.2|^10.0",
-        "illuminate/support": "^v8.83.2|^9.2|^10.0"
+        "illuminate/contracts": "^8.73|^9.2|^10.0|^11.0",
+        "illuminate/support": "^v8.83.2|^9.2|^10.0|^11.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.3",
-        "nunomaduro/collision": "^5.10|^6.0",
+        "nunomaduro/collision": "^5.10|^6.0|^8.0",
         "nunomaduro/larastan": "^1.0|^2.0.1",
-        "orchestra/testbench": "^6.22|^7.0|^8.0",
+        "orchestra/testbench": "^6.22|^7.0|^8.0|^9.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5|^10.5"
     },
     "autoload": {
         "psr-4": {
