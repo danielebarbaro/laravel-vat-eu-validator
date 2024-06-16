@@ -2,36 +2,42 @@
 
 namespace Danielebarbaro\LaravelVatEuValidator\Tests\Rules;
 
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
 use Orchestra\Testbench\TestCase;
 
 class VatNumberFormatTest extends TestCase
 {
-    protected VatNumberFormat $rule;
-
-    protected string $fake_vat;
-
-    protected function setUp(): void
+    public function testVatNumberFormat(): void
     {
-        parent::setUp();
+        $rule = new VatNumberFormat();
+        $fake_vat = 'is_a_fake_vat_string';
 
-        $this->rule = new VatNumberFormat();
-        $this->fake_vat = 'IT12345678901';
+        VatValidator::shouldReceive('validateFormat')
+            ->once()
+            ->with($fake_vat)
+            ->andReturn(true);
+
+        $this->assertNull($rule->validate('vat_number_format', $fake_vat, function () {
+            $this->fail('Validation should not fail');
+        }));
     }
 
-    public function testSuccessVatNumberFormat(): void
+    public function testVatNumberFormatNotExist(): void
     {
-        self::assertFalse($this->rule->passes('vat_number_format', $this->fake_vat));
-        self::assertTrue($this->rule->passes('vat_number_format', 'IT10648200011'));
-    }
+        $rule = new VatNumberFormat();
+        $fake_vat = 'is_a_fake_vat_string';
 
-    public function testFailVatNumberFormat(): void
-    {
-        self::assertFalse($this->rule->passes('vat_number_format', 'foo'));
-    }
+        VatValidator::shouldReceive('validateFormat')
+            ->once()
+            ->with($fake_vat)
+            ->andReturn(false);
 
-    public function testFailVatNumberFormatMessage(): void
-    {
-        self::assertStringContainsString('VAT number :attribute  not exist.', $this->rule->message());
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('VAT number :attribute  not exist.');
+
+        $rule->validate('vat_number_format', $fake_vat, function ($message) {
+            throw new \Exception($message);
+        });
     }
 }

@@ -2,30 +2,42 @@
 
 namespace Danielebarbaro\LaravelVatEuValidator\Tests\Rules;
 
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
 use Orchestra\Testbench\TestCase;
 
 class VatNumberTest extends TestCase
 {
-    protected VatNumber $rule;
-
-    protected string $fake_vat;
-
-    protected function setUp(): void
+    public function testVatNumber(): void
     {
-        parent::setUp();
+        $rule = new VatNumber();
+        $fake_vat = 'is_a_fake_vat_string';
 
-        $this->rule = new VatNumber();
-        $this->fake_vat = 'IT12345678901';
+        VatValidator::shouldReceive('validate')
+            ->once()
+            ->with($fake_vat)
+            ->andReturn(true);
+
+        $this->assertNull($rule->validate('vat_number', $fake_vat, function () {
+            $this->fail('Validation should not fail');
+        }));
     }
 
-    public function testSuccessVatNumber(): void
+    public function testVatNumberNotExist(): void
     {
-        self::assertFalse($this->rule->passes('vat_number', $this->fake_vat));
-    }
+        $rule = new VatNumber();
+        $fake_vat = 'is_a_fake_vat_string';
 
-    public function testSuccessVatNumberMessage(): void
-    {
-        self::assertStringContainsString('The :attribute must be a valid VAT number.', $this->rule->message());
+        VatValidator::shouldReceive('validate')
+            ->once()
+            ->with($fake_vat)
+            ->andReturn(false);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The :attribute must be a valid VAT number.');
+
+        $rule->validate('vat_number', $fake_vat, function ($message) {
+            throw new \Exception($message);
+        });
     }
 }
