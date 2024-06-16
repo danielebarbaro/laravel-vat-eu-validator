@@ -10,7 +10,7 @@ class VatNumberExist implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!VatValidator::validateExistence($value)) {
+        if (! VatValidator::validateExistence($value)) {
             $fail(__('The :attribute must be write in a valid number format {country_name}{vat_number}.'));
         }
     }

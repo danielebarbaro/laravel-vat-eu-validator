@@ -49,7 +49,7 @@ class VatValidator
      */
     public function __construct(private ?Client $client = null)
     {
-        if (!$this->client instanceof Client) {
+        if (! $this->client instanceof Client) {
             $this->client = new Client();
         }
     }
