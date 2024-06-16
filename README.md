@@ -9,6 +9,7 @@ Laravel VAT EU VALIDATOR
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
 #### For Laravel 5,6,7 use tag 0.5.4
+#### For Laravel 7,8,9 use tag 1.20
 
 ## Installation
 
@@ -60,15 +61,15 @@ class Controller {
     public function foo(Request $request) 
     {
         $request->validate([
-            'bar_field' => ['vat_number'],
+            'bar_field' => [new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber()],
         ]);
         
         $request->validate([
-            'bar_field' => ['vat_number_exist'],
+            'bar_field' => [new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist()],
         ]);
         
         $request->validate([
-            'bar_field' => ['vat_number_format'],
+            'bar_field' => [new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat()],
        ]);
     }
 }
@@ -85,9 +86,9 @@ class Controller {
     public function foo(Request $request) 
     {
         $request->validate([
-            'bar_field' => [ new Rules\VatNumber() ],
-            'bar_field' => [ new Rules\VatNumberExist() ],
-            'bar_field' => [ new Rules\VatNumberFormat() ],
+            'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber() ],
+            'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist() ],
+            'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat() ],
         ]);
     }
 }
@@ -109,10 +110,6 @@ Just add and customize validation strings in `lang/en/validation.php`
 composer test
 ```
 
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
@@ -123,11 +120,9 @@ If you discover any security related issues, please email barbaro.daniele@gmail.
 
 ## Credits
 
-- [Daniele Barbaro](https://github.com/danielebarbaro)
+- [Daniele Barbaro](https://daniele.barbaro.online)
 
 ## Contributors
-- [Alessio Nobile](https://github.com/alessionobile)
-- [Javier Núñez](https://github.com/javiernunez)
 - [All Contributors](../../contributors)
 
 ## License
