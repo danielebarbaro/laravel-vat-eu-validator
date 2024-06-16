@@ -11,7 +11,7 @@ class VatValidatorTest extends TestCase
 
     protected string $fake_vat;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -19,17 +19,17 @@ class VatValidatorTest extends TestCase
         $this->fake_vat = 'IT12345678901';
     }
 
-    public function testVatValidFormatFail()
+    public function testVatValidFormatFail(): void
     {
         self::assertFalse($this->validator->validateFormat($this->fake_vat));
     }
 
-    public function testVatValidFormat()
+    public function testVatValidFormat(): void
     {
         self::assertTrue($this->validator->validateFormat('IT10648200011'));
     }
 
-    public function testVatWrongFormat()
+    public function testVatWrongFormat(): void
     {
         $vat_numbers = [
             '',
@@ -42,12 +42,12 @@ class VatValidatorTest extends TestCase
         }
     }
 
-    public function testVatExist()
+    public function testVatExist(): void
     {
         self::assertFalse($this->validator->validateExistence($this->fake_vat));
     }
 
-    public function testVatValid()
+    public function testVatValid(): void
     {
         self::assertFalse($this->validator->validate($this->fake_vat));
     }

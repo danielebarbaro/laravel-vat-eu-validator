@@ -8,7 +8,7 @@ use Orchestra\Testbench\TestCase;
 
 class VatValidatorFacadeTest extends TestCase
 {
-    public function testVatValidatorFacade()
+    public function testVatValidatorFacade(): void
     {
         $validator = new VatValidator();
         $fake_vat = 'is_a_fake_vat_string';

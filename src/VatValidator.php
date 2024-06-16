@@ -44,19 +44,12 @@ class VatValidator
     ];
 
     /**
-     * Vies Client.
-     */
-    private ?Client $client;
-
-    /**
      * VatValidator constructor.
      * @param Client|null $client
      */
-    public function __construct(Client $client = null)
+    public function __construct(private ?Client $client = null)
     {
-        $this->client = $client;
-
-        if (! $this->client) {
+        if (!$this->client instanceof Client) {
             $this->client = new Client();
         }
     }
@@ -79,15 +72,15 @@ class VatValidator
     public function validateFormat(string $vatNumber): bool
     {
         $vatNumber = $this->vatCleaner($vatNumber);
-        list($country, $number) = $this->splitVat($vatNumber);
+        [$country, $number] = $this->splitVat($vatNumber);
 
         if (! isset(self::$pattern_expression[$country])) {
             return false;
         }
 
-        $validate_rule = preg_match('/^' . self::$pattern_expression[$country] . '$/', $number) > 0;
+        $validate_rule = preg_match('/^' . self::$pattern_expression[$country] . '$/', (string) $number) > 0;
 
-        if ($validate_rule === true && $country === 'IT') {
+        if ($validate_rule && $country === 'IT') {
             $result = self::luhnCheck($number);
 
             return $result % 10 == 0;
@@ -107,7 +100,7 @@ class VatValidator
         $vatNumber = $this->vatCleaner($vatNumber);
         $result = $this->validateFormat($vatNumber);
         if ($result) {
-            list($country, $number) = $this->splitVat($vatNumber);
+            [$country, $number] = $this->splitVat($vatNumber);
             $result = $this->client->check($country, $number);
         }
 
@@ -125,14 +118,16 @@ class VatValidator
     {
         $sum = 0;
         $vat_array = str_split($vat);
-        for ($index = 0; $index < count($vat_array); $index++) {
+        $counter = count($vat_array);
+        for ($index = 0; $index < $counter; ++$index) {
             $value = intval($vat_array[$index]);
-            if ($index % 2) {
-                $value = $value * 2;
+            if ($index % 2 !== 0) {
+                $value *= 2;
                 if ($value > 9) {
                     $value = 1 + ($value % 10);
                 }
             }
+
             $sum += $value;
         }
 
