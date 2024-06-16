@@ -74,6 +74,7 @@ class VatValidator
         $vatNumber = $this->vatCleaner($vatNumber);
         [$country, $number] = $this->splitVat($vatNumber);
 
+
         if (! isset(self::$pattern_expression[$country])) {
             return false;
         }
@@ -99,6 +100,7 @@ class VatValidator
     {
         $vatNumber = $this->vatCleaner($vatNumber);
         $result = $this->validateFormat($vatNumber);
+
         if ($result) {
             [$country, $number] = $this->splitVat($vatNumber);
             $result = $this->client->check($country, $number);

@@ -3,29 +3,14 @@
 namespace Danielebarbaro\LaravelVatEuValidator\Rules;
 
 use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
-use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class VatNumber implements Rule
+class VatNumber implements ValidationRule
 {
-    /**
-     * Determine if the validation rule passes.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
-     */
-    public function passes($attribute, $value): bool
+    public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
-        return VatValidator::validate($value);
-    }
-
-    /**
-     * Get the validation error message.
-     *
-     * @return string
-     */
-    public function message(): string
-    {
-        return __('The :attribute must be a valid VAT number.');
+        if (!VatValidator::validate($value)) {
+            $fail(__('The :attribute must be a valid VAT number.'));
+        }
     }
 }
