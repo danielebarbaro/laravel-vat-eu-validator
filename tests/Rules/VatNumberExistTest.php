@@ -2,33 +2,42 @@
 
 namespace Danielebarbaro\LaravelVatEuValidator\Tests\Rules;
 
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
 use Orchestra\Testbench\TestCase;
 
 class VatNumberExistTest extends TestCase
 {
-    protected VatNumberExist $rule;
-
-    protected string $fake_vat;
-
-    protected function setUp(): void
+    public function testVatNumberExist(): void
     {
-        parent::setUp();
+        $rule = new VatNumberExist();
+        $fake_vat = 'is_a_fake_vat_string';
 
-        $this->rule = new VatNumberExist();
-        $this->fake_vat = 'IT12345678901';
+        VatValidator::shouldReceive('validateExistence')
+            ->once()
+            ->with($fake_vat)
+            ->andReturn(true);
+
+        $this->assertNull($rule->validate('vat_number_exist', $fake_vat, function () {
+            $this->fail('Validation should not fail');
+        }));
     }
 
-    public function testSuccessVatNumberFormatExist(): void
+    public function testVatNumberDoesNotExist(): void
     {
-        self::assertFalse($this->rule->passes('vat_number_exist', $this->fake_vat));
-    }
+        $rule = new VatNumberExist();
+        $fake_vat = 'is_a_fake_vat_string';
 
-    public function testSuccessVatNumberFormatExistMessage(): void
-    {
-        self::assertStringContainsString(
-            'The :attribute must be write in a valid number format {country_name}{vat_number}.',
-            $this->rule->message()
-        );
+        VatValidator::shouldReceive('validateExistence')
+            ->once()
+            ->with($fake_vat)
+            ->andReturn(false);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The :attribute must be write in a valid number format {country_name}{vat_number}.');
+
+        $rule->validate('vat_number_exist', $fake_vat, function ($message) {
+            throw new \Exception($message);
+        });
     }
 }
