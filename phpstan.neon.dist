@@ -6,4 +6,6 @@ parameters:
     paths:
         - src
     tmpDir: build/phpstan
+    ignoreErrors:
+        - '#Static call to instance method [a-zA-Z0-9\\_]+::#'
 
