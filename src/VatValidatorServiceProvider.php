@@ -21,7 +21,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator): void {
             $rule = new VatNumber();
-            $rule->validate($attribute, $value, fn (string $message = null) => null);
+            $rule->validate($attribute, $value, static fn (string $message = null): null => null);
         });
 
         /**
@@ -29,7 +29,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator): void {
             $rule = new VatNumberExist();
-            $rule->validate($attribute, $value, fn (string $message = null) => null);
+            $rule->validate($attribute, $value, static fn (string $message = null): null => null);
         });
 
         /**
@@ -37,7 +37,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator): void {
             $rule = new VatNumberFormat();
-            $rule->validate($attribute, $value, fn (string $message = null) => null);
+            $rule->validate($attribute, $value, static fn (string $message = null): null => null);
         });
     }
 

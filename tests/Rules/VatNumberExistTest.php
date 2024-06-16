@@ -18,7 +18,7 @@ class VatNumberExistTest extends TestCase
             ->with($fake_vat)
             ->andReturn(true);
 
-        $this->assertNull($rule->validate('vat_number_exist', $fake_vat, function () {
+        $this->assertNull($rule->validate('vat_number_exist', $fake_vat, function (): never {
             $this->fail('Validation should not fail');
         }));
     }
@@ -36,7 +36,7 @@ class VatNumberExistTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('The :attribute must be write in a valid number format {country_name}{vat_number}.');
 
-        $rule->validate('vat_number_exist', $fake_vat, function ($message) {
+        $rule->validate('vat_number_exist', $fake_vat, static function ($message): never {
             throw new \Exception($message);
         });
     }
