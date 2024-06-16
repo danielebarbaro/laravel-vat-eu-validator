@@ -54,7 +54,7 @@ class Client
      */
     protected function getClient(): SoapClient
     {
-        if (!$this->client instanceof \SoapClient) {
+        if (! $this->client instanceof \SoapClient) {
             $this->client = new SoapClient(self::URL, ['connection_timeout' => $this->timeout]);
         }
 
