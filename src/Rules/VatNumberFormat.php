@@ -3,29 +3,14 @@
 namespace Danielebarbaro\LaravelVatEuValidator\Rules;
 
 use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
-use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class VatNumberFormat implements Rule
+class VatNumberFormat implements ValidationRule
 {
-    /**
-     * Determine if the validation rule passes.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
-     */
-    public function passes($attribute, $value): bool
+    public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
-        return VatValidator::validateFormat($value);
-    }
-
-    /**
-     * Get the validation error message.
-     *
-     * @return string
-     */
-    public function message(): string
-    {
-        return __('VAT number :attribute  not exist.');
+        if (!VatValidator::validateFormat($value)) {
+            $fail(__('VAT number :attribute  not exist.'));
+        }
     }
 }
