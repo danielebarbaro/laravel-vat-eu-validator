@@ -9,7 +9,7 @@ class VatNumberFormat implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
-        if (!VatValidator::validateFormat($value)) {
+        if (! VatValidator::validateFormat($value)) {
             $fail(__('VAT number :attribute  not exist.'));
         }
     }
