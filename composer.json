@@ -51,6 +51,8 @@
         }
     },
     "scripts": {
+        "rector": "vendor/bin/rector process",
+        "rector-dry": "vendor/bin/rector process --dry-run",
         "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
         "cs-check": "vendor/bin/phpcs",
