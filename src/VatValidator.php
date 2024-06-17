@@ -49,7 +49,7 @@ class VatValidator
      */
     public function __construct(private ?Client $client = null)
     {
-        if (!$this->client instanceof \Danielebarbaro\LaravelVatEuValidator\Vies\Client) {
+        if (! $this->client instanceof \Danielebarbaro\LaravelVatEuValidator\Vies\Client) {
             $this->client = new Client();
         }
     }

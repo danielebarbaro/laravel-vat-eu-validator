@@ -19,24 +19,27 @@ class VatValidatorServiceProvider extends ServiceProvider
         /**
          * Register the "vat_number" validation rule.
          */
-        Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator) : bool {
+        Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumber();
+
             return $rule->passes($attribute, $value);
         });
 
         /**
          * Register the "vat_number_exist" validation rule.
          */
-        Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator) : bool {
+        Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumberExist();
+
             return $rule->passes($attribute, $value);
         });
 
         /**
          * Register the "vat_number_format" validation rule.
          */
-        Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator) : bool {
+        Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumberFormat();
+
             return $rule->passes($attribute, $value);
         });
     }
@@ -46,6 +49,6 @@ class VatValidatorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(VatValidator::class, fn(Container $app): \Danielebarbaro\LaravelVatEuValidator\VatValidator => new VatValidator());
+        $this->app->singleton(VatValidator::class, fn (Container $app): \Danielebarbaro\LaravelVatEuValidator\VatValidator => new VatValidator());
     }
 }
