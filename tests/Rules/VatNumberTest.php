@@ -11,7 +11,7 @@ class VatNumberTest extends TestCase
 
     protected string $fake_vat;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -19,12 +19,12 @@ class VatNumberTest extends TestCase
         $this->fake_vat = 'IT12345678901';
     }
 
-    public function testSuccessVatNumber()
+    public function testSuccessVatNumber(): void
     {
         self::assertFalse($this->rule->passes('vat_number', $this->fake_vat));
     }
 
-    public function testSuccessVatNumberMessage()
+    public function testSuccessVatNumberMessage(): void
     {
         self::assertStringContainsString('The :attribute must be a valid VAT number.', $this->rule->message());
     }

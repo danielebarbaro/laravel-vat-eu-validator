@@ -12,24 +12,15 @@ class Client
      */
     public const URL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 
-    /**
-     * @var int
-     */
-    protected $timeout;
-
-    /**
-     * @var SoapClient
-     */
-    private $client;
+    private ?\SoapClient $client = null;
 
     /**
      * Client constructor.
      *
      * @param int $timeout
      */
-    public function __construct(int $timeout = 10)
+    public function __construct(protected int $timeout = 10)
     {
-        $this->timeout = $timeout;
     }
 
     /**
@@ -50,8 +41,8 @@ class Client
                     'vatNumber' => $vatNumber,
                 ]
             );
-        } catch (SoapFault $e) {
-            throw new ViesException($e->getMessage(), $e->getCode());
+        } catch (SoapFault $soapFault) {
+            throw new ViesException($soapFault->getMessage(), $soapFault->getCode());
         }
 
         return $response->valid;

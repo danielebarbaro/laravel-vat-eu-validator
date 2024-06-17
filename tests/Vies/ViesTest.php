@@ -10,32 +10,32 @@ class ViesTest extends TestCase
 {
     protected Client $client;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->client = new Client();
     }
 
-    public function testClientEmptyDataException()
+    public function testClientEmptyDataException(): void
     {
         $this->expectException(ViesException::class);
         $this->client->check('', '');
     }
 
-    public function testClientEmptyVatNumberException()
+    public function testClientEmptyVatNumberException(): void
     {
         $this->expectException(ViesException::class);
         $this->client->check('IT', '');
     }
 
-    public function testClientEmptyCountryException()
+    public function testClientEmptyCountryException(): void
     {
         $this->expectException(ViesException::class);
         $this->client->check('', '12345');
     }
 
-    public function testFailExistResponse()
+    public function testFailExistResponse(): void
     {
         $response = $this->client->check('IT', '12345');
         self::assertFalse($response);
