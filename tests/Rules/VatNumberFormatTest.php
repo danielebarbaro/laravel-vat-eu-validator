@@ -34,7 +34,7 @@ class VatNumberFormatTest extends TestCase
             ->andReturn(false);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('VAT number :attribute  not exist.');
+        $this->expectExceptionMessage('The :attribute must be write in a valid number format {country_name}{vat_number}.');
 
         $rule->validate('vat_number_format', $fake_vat, static function ($message): never {
             throw new \Exception($message);
