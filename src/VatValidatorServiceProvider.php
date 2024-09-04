@@ -19,25 +19,25 @@ class VatValidatorServiceProvider extends ServiceProvider
         /**
          * Register the "vat_number" validation rule.
          */
-        Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator): void {
+        Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumber();
-            $rule->validate($attribute, $value, static fn (string $message = null): null => null);
+            return $rule->isValid($value);
         });
 
         /**
          * Register the "vat_number_exist" validation rule.
          */
-        Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator): void {
+        Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumberExist();
-            $rule->validate($attribute, $value, static fn (string $message = null): null => null);
+            return $rule->isValid($value);
         });
 
         /**
          * Register the "vat_number_format" validation rule.
          */
-        Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator): void {
+        Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumberFormat();
-            $rule->validate($attribute, $value, static fn (string $message = null): null => null);
+            return $rule->isValid($value);
         });
     }
 

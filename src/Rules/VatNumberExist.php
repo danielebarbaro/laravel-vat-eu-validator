@@ -8,9 +8,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class VatNumberExist implements ValidationRule
 {
+    public function isValid(mixed $value): bool
+    {
+        return VatValidator::validateExistence($value);
+    }
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! VatValidator::validateExistence($value)) {
+        if (! $this->isValid($value)) {
             $fail(__('VAT number :attribute  not exist.'));
         }
     }
