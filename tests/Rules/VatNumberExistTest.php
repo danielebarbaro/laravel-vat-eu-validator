@@ -34,7 +34,7 @@ class VatNumberExistTest extends TestCase
             ->andReturn(false);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('VAT number :attribute  not exist.');
+        $this->expectExceptionMessage('laravelVatEuValidator::validation.vat_number_exist');
 
         $rule->validate('vat_number_exist', $fake_vat, static function ($message): never {
             throw new \Exception($message);

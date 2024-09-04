@@ -34,7 +34,7 @@ class VatNumberFormatTest extends TestCase
             ->andReturn(false);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The :attribute must be write in a valid number format {country_name}{vat_number}.');
+        $this->expectExceptionMessage('laravelVatEuValidator::validation.vat_number_format');
 
         $rule->validate('vat_number_format', $fake_vat, static function ($message): never {
             throw new \Exception($message);
