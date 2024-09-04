@@ -95,14 +95,9 @@ class Controller {
 ```
 
 ### Translations
-Just add and customize validation strings in `lang/en/validation.php`
-```
-    ...
-    'vat_number' => 'The :attribute must be a valid VAT number.',
-    'vat_number_format' => 'The :attribute must be write in a valid number format {country_name}{vat_number}.',
-    'vat_number_exist' => 'VAT number :attribute not exist.',
-    ...
-```
+Most of the displayed strings are defined in the `vatEuValidator::validation` translation files. The package ships with a few supported locales, but if yours is not yet included we would greatly appreciate a PR.
+
+If not already published, you can edit or fill the translation files using `php artisan vendor:publish --tag=laravel-vat-eu-validator-lang`, this will copy our translation files to your app's `vendor/laravelVatEuValidator` "lang" path.
 
 ### Testing
 
