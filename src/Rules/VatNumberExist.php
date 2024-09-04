@@ -11,7 +11,7 @@ class VatNumberExist implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! VatValidator::validateExistence($value)) {
-            $fail(__('VAT number :attribute  not exist.'));
+            $fail(__('laravelVatEuValidator::validation.vat_number_exist', ['attribute' => $attribute]));
         }
     }
 }
