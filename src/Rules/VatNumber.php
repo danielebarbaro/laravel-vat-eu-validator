@@ -7,9 +7,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class VatNumber implements ValidationRule
 {
+    public function isValid(mixed $value): bool
+    {
+        return VatValidator::validate($value);
+    }
+
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
-        if (! VatValidator::validate($value)) {
+        if (! $this->isValid($value)) {
             $fail(__('The :attribute must be a valid VAT number.'));
         }
     }
