@@ -87,6 +87,10 @@ class VatValidator
             return $result % 10 == 0;
         }
 
+        if ($validate_rule && $country === 'HU') {
+            return $this->validateHuVat($number);
+        }
+
         return $validate_rule;
     }
 
@@ -134,6 +138,27 @@ class VatValidator
         }
 
         return $sum;
+    }
+
+    /**
+     * Validates a Hungarian VAT number.
+     *
+     * @param string $vat
+     * @return bool
+     */
+    private function validateHuVat(string $vat): bool
+    {
+        $checksum = (int) $vat[7];
+        $weights = [9, 7, 3, 1, 9, 7, 3];
+        $sum = 0;
+
+        for ($i = 0; $i < 7; $i++) {
+            $sum += (int) $vat[$i] * $weights[$i];
+        }
+
+        $calculatedChecksum = (10 - ($sum % 10)) % 10;
+
+        return $calculatedChecksum === $checksum;
     }
 
     /**
