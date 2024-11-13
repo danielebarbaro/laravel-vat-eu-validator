@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Add Hungarian VAT number validation - 2024-11-13
+
+- Implement checksum validation for Hungarian VAT numbers.
+- Update `VatValidator.php` to include Hungarian VAT validation logic.
+- Add tests for Hungarian VAT number validation in `VatValidatorTest.php`.
+
+Thx to @bsh
+
 ## Language files have been introduced - 2024-09-16
 
 Thanks to @dualklip, language files have been introduced.
