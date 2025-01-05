@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Fix php8.4 warnings - 2025-01-05
+
+thx to @it-can
+
 ## Add Hungarian VAT number validation - 2024-11-13
 
 - Implement checksum validation for Hungarian VAT numbers.
