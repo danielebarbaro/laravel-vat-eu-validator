@@ -15,7 +15,7 @@ class VatNumberFormat implements ValidationRule
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
         if (! $this->isValid($value)) {
-            $fail(__('The :attribute must be write in a valid number format {country_name}{vat_number}.'));
+            $fail(__('laravelVatEuValidator::validation.vat_number_format', ['attribute' => $attribute]));
         }
     }
 }

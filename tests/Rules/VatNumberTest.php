@@ -34,7 +34,7 @@ class VatNumberTest extends TestCase
             ->andReturn(false);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The :attribute must be a valid VAT number.');
+        $this->expectExceptionMessage('laravelVatEuValidator::validation.vat_number');
 
         $rule->validate('vat_number', $fake_vat, static function ($message): never {
             throw new \Exception($message);

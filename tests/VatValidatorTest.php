@@ -34,6 +34,7 @@ class VatValidatorTest extends TestCase
         $vat_numbers = [
             '',
             'IT1234567890',
+            'HU23395381',
             'IT12345',
             'foobar123',
         ];
@@ -56,5 +57,15 @@ class VatValidatorTest extends TestCase
     {
         self::assertIsInt($this->validator->luhnCheck($this->fake_vat));
         self::assertNotEquals(0, $this->validator->luhnCheck($this->fake_vat));
+    }
+
+    public function testHuVatValidFormat(): void
+    {
+        self::assertTrue($this->validator->validateFormat('HU28395515'));
+    }
+
+    public function testHuVatInvalidFormat(): void
+    {
+        self::assertFalse($this->validator->validateFormat('HU28395514'));
     }
 }

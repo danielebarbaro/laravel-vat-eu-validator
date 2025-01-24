@@ -39,6 +39,12 @@ class VatValidatorServiceProvider extends ServiceProvider
             $rule = new VatNumberFormat();
             return $rule->isValid($value);
         });
+
+        $this->loadTranslationsFrom(realpath(__DIR__ . '/..').'/resources/lang', 'laravelVatEuValidator');
+
+        $this->publishes([
+            realpath(realpath(__DIR__ . '/..').'/resources/lang') => $this->app->langPath('vendor/laravelVatEuValidator'),
+        ], 'laravel-vat-eu-validator-lang');
     }
 
     /**

@@ -15,7 +15,7 @@ class VatNumber implements ValidationRule
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
         if (! $this->isValid($value)) {
-            $fail(__('The :attribute must be a valid VAT number.'));
+            $fail(__('laravelVatEuValidator::validation.vat_number', ['attribute' => $attribute]));
         }
     }
 }
