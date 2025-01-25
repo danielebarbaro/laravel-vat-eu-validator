@@ -9,7 +9,7 @@ Laravel VAT EU VALIDATOR
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
 #### For Laravel 5,6,7 use tag 0.5.4
-#### For Laravel 7,8,9 use tag 1.20
+#### For Laravel 7,8,9,10,11 use tag 1.20
 
 ## Installation
 
@@ -89,6 +89,48 @@ class Controller {
             'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber() ],
             'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist() ],
             'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat() ],
+        ]);
+    }
+}
+```
+
+or
+
+```php
+use Illuminate\Http\Request;
+use Danielebarbaro\LaravelVatEuValidator\Rules;
+
+class Controller {
+
+    public function foo(Request $request)
+    {
+        $request->validate([
+            'bar_field' => [
+                new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber(),
+                new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist(),
+                new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat(),
+            ],
+        ]);
+    }
+}
+```
+
+or
+
+```php
+use Illuminate\Http\Request;
+use Danielebarbaro\LaravelVatEuValidator\Rules;
+
+class Controller {
+
+    public function foo(Request $request)
+    {
+        $request->validate([
+            'bar_field' => [
+                'vat_number',
+                'vat_number_format',
+                'vat_number_exist',
+            ],
         ]);
     }
 }
