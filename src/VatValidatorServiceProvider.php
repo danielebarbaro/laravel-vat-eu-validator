@@ -21,6 +21,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumber();
+
             return $rule->isValid($value);
         });
 
@@ -29,6 +30,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumberExist();
+
             return $rule->isValid($value);
         });
 
@@ -37,6 +39,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator): bool {
             $rule = new VatNumberFormat();
+
             return $rule->isValid($value);
         });
 
