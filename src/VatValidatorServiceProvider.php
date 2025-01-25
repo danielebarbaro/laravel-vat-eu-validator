@@ -6,7 +6,6 @@ use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
