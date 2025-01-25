@@ -7,15 +7,15 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class VatNumber implements ValidationRule
 {
-    public function isValid(mixed $value): bool
-    {
-        return VatValidator::validate($value);
-    }
-
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
         if (! $this->isValid($value)) {
             $fail(__('laravelVatEuValidator::validation.vat_number', ['attribute' => $attribute]));
         }
+    }
+
+    private function isValid(mixed $value): bool
+    {
+        return VatValidator::validate($value);
     }
 }
