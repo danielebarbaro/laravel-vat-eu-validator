@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Improved Validator Extension - 2025-01-28
+
+**Improved Validator Extension**: Refactored the `Validator::extend()` and `Validator::replacer()` methods to enhance the flexibility and maintainability of custom validation rules. These changes ensure better integration and easier customization when extending validation logic.
+
+A heartfelt thank you to [frknakk](https://github.com/frknakk) and [vazaha-nl](https://github.com/vazaha-nl) for their contributions and support in improving this package!
+
 ## Fix php8.4 warnings - 2025-01-05
 
 thx to @it-can
