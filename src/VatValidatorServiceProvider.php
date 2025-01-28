@@ -19,31 +19,85 @@ class VatValidatorServiceProvider extends ServiceProvider
         /**
          * Register the "vat_number" validation rule.
          */
-        Validator::extend('vat_number', static function ($attribute, $value, $parameters, $validator): void {
-            $rule = new VatNumber();
-            $rule->validate($attribute, $value, static fn (?string $message = null): null => null);
+        Validator::extend(
+            'vat_number',
+            static function ($attribute, $value, $parameters, $validator): bool {
+                $passed = true;
+                $rule = new VatNumber();
+
+                $rule->validate(
+                    $attribute,
+                    $value,
+                    static function (?string $message = null) use (&$passed): void {
+                        $passed = false;
+                    }
+                );
+
+                return $passed;
+            }
+        );
+
+        Validator::replacer('vat_number', function ($message, $attribute, $rule, $parameters) {
+            return __('laravelVatEuValidator::validation.vat_number', ['attribute' => $attribute]);
         });
 
         /**
          * Register the "vat_number_exist" validation rule.
          */
-        Validator::extend('vat_number_exist', static function ($attribute, $value, $parameters, $validator): void {
-            $rule = new VatNumberExist();
-            $rule->validate($attribute, $value, static fn (?string $message = null): null => null);
+        Validator::extend(
+            'vat_number_exist',
+            static function ($attribute, $value, $parameters, $validator): bool {
+                $passed = true;
+                $rule = new VatNumberExist();
+
+                $rule->validate(
+                    $attribute,
+                    $value,
+                    static function (?string $message = null) use (&$passed): void {
+                        $passed = false;
+                    }
+                );
+
+                return $passed;
+            }
+        );
+
+        Validator::replacer('vat_number_exist', function ($message, $attribute, $rule, $parameters) {
+            return __('laravelVatEuValidator::validation.vat_number_exist', ['attribute' => $attribute]);
         });
 
         /**
          * Register the "vat_number_format" validation rule.
          */
-        Validator::extend('vat_number_format', static function ($attribute, $value, $parameters, $validator): void {
-            $rule = new VatNumberFormat();
-            $rule->validate($attribute, $value, static fn (?string $message = null): null => null);
+        Validator::extend(
+            'vat_number_format',
+            static function ($attribute, $value, $parameters, $validator): bool {
+                $passed = true;
+                $rule = new VatNumberFormat();
+
+                $rule->validate(
+                    $attribute,
+                    $value,
+                    static function (?string $message = null) use (&$passed): void {
+                        $passed = false;
+                    }
+                );
+
+                return $passed;
+            }
+        );
+
+        Validator::replacer('vat_number_format', function ($message, $attribute, $rule, $parameters) {
+            return __('laravelVatEuValidator::validation.vat_number_format', ['attribute' => $attribute]);
         });
 
-        $this->loadTranslationsFrom(realpath(__DIR__ . '/..').'/resources/lang', 'laravelVatEuValidator');
+        $this->loadTranslationsFrom(
+            __DIR__.'/../resources/lang',
+            'laravelVatEuValidator'
+        );
 
         $this->publishes([
-            realpath(realpath(__DIR__ . '/..').'/resources/lang') => $this->app->langPath('vendor/laravelVatEuValidator'),
+            __DIR__.'/../resources/lang' => $this->app->langPath('vendor/laravelVatEuValidator'),
         ], 'laravel-vat-eu-validator-lang');
     }
 
