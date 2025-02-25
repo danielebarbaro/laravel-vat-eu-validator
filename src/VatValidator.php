@@ -16,6 +16,7 @@ class VatValidator
         'AT' => 'U[A-Z\d]{8}',
         'BE' => '(0\d{9}|\d{10})',
         'BG' => '\d{9,10}',
+        'CH' => '^\d{6}$|^[E]\d{9}\s?(TVA|MWST|IVA)$'
         'CY' => '\d{8}[A-Z]',
         'CZ' => '\d{8,10}',
         'DE' => '\d{9}',
