@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Add CH vat Validator - 2025-02-26
+
+Add CH vat Validator thx to @jeroen-marinus
+
 ## Improved Validator Extension - 2025-01-28
 
 **Improved Validator Extension**: Refactored the `Validator::extend()` and `Validator::replacer()` methods to enhance the flexibility and maintainability of custom validation rules. These changes ensure better integration and easier customization when extending validation logic.
