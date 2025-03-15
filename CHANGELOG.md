@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Laravel 12 support - 2025-03-15
+
+Thanks to @laravel-shift, we now have compatibility with Laravel 12! 🚀
+A big shoutout to @mbardelmeijer, @it-can, and @chellmann for the push to get this update out! 😊
+
 ## Add CH vat Validator - 2025-02-26
 
 Add CH vat Validator thx to @jeroen-marinus
