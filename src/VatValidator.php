@@ -144,17 +144,17 @@ class VatValidator
     /**
      * Validates a Hungarian VAT number.
      *
-     * @param string $vat
+     * @param string $vatNumber
      * @return bool
      */
-    private function validateHuVat(string $vat): bool
+    private function validateHuVat(string $vatNumber): bool
     {
-        $checksum = (int) $vat[7];
+        $checksum = (int) $vatNumber[7];
         $weights = [9, 7, 3, 1, 9, 7, 3];
         $sum = 0;
 
         foreach ($weights as $i => $weight) {
-            $sum += (int) $vat[$i] * $weight;
+            $sum += (int) $vatNumber[$i] * $weight;
         }
 
         $calculatedChecksum = (10 - ($sum % 10)) % 10;
