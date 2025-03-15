@@ -8,9 +8,9 @@ Laravel VAT EU VALIDATOR
 
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
-#### For Laravel 10,11,12 use tag 2.x
-#### For Laravel 8,9 use tag 1.20
-#### For Laravel 5,6,7 use tag 0.5.4
+#### For Laravel 10, 11, 12 use tag 2.x
+#### For Laravel 8, 9 use tag 1.20
+#### For Laravel 5, 6, 7 use tag 0.5.4
 
 ## Installation
 
