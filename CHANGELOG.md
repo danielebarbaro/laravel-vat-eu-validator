@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Allow overriding messages on validation - 2025-10-09
+
+Thanks to @Gybra, it’s now possible to override validation rule messages.
+
 ## Laravel 12 support - 2025-03-15
 
 Thanks to @laravel-shift, we now have compatibility with Laravel 12! 🚀
