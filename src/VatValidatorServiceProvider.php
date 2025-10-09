@@ -37,7 +37,9 @@ class VatValidatorServiceProvider extends ServiceProvider
             }
         );
 
-        Validator::replacer('vat_number', fn (string $message, string $attribute, string $rule, array $parameters): string => 
+        Validator::replacer(
+            'vat_number',
+            fn (string $message, string $attribute, string $rule, array $parameters): string =>
             $message === 'validation.vat_number' ? __("laravelVatEuValidator::{$message}", ['attribute' => $attribute]) : $message
         );
 
@@ -62,7 +64,9 @@ class VatValidatorServiceProvider extends ServiceProvider
             }
         );
 
-        Validator::replacer('vat_number_exist', fn (string $message, string $attribute, string $rule, array $parameters): string => 
+        Validator::replacer(
+            'vat_number_exist',
+            fn (string $message, string $attribute, string $rule, array $parameters): string =>
             $message === 'validation.vat_number_exist' ? __("laravelVatEuValidator::{$message}", ['attribute' => $attribute]) : $message
         );
 
@@ -87,7 +91,9 @@ class VatValidatorServiceProvider extends ServiceProvider
             }
         );
 
-        Validator::replacer('vat_number_format', fn (string $message, string $attribute, string $rule, array $parameters): string => 
+        Validator::replacer(
+            'vat_number_format',
+            fn (string $message, string $attribute, string $rule, array $parameters): string =>
             $message === 'validation.vat_number_format' ? __("laravelVatEuValidator::{$message}", ['attribute' => $attribute]) : $message
         );
 
