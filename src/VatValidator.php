@@ -2,7 +2,7 @@
 
 namespace Danielebarbaro\LaravelVatEuValidator;
 
-use Danielebarbaro\LaravelVatEuValidator\Vies\Client;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesClientInterface;
 
 class VatValidator
 {
@@ -46,13 +46,10 @@ class VatValidator
 
     /**
      * VatValidator constructor.
-     * @param Client|null $client
+     * @param ViesClientInterface|null $client
      */
-    public function __construct(private ?Client $client = null)
+    public function __construct(private readonly ViesClientInterface $client)
     {
-        if (! $this->client instanceof Client) {
-            $this->client = new Client();
-        }
     }
 
     /**

@@ -2,19 +2,51 @@
 
 namespace Danielebarbaro\LaravelVatEuValidator\Tests\Vies;
 
-use Danielebarbaro\LaravelVatEuValidator\Vies\Client;
+use Danielebarbaro\LaravelVatEuValidator\VatValidator;
+use Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesClientInterface;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesSoapClient;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesException;
-use PHPUnit\Framework\TestCase;
+use Orchestra\Testbench\TestCase;
 
 class ViesTest extends TestCase
 {
-    protected Client $client;
+    protected ViesClientInterface $client;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->client = new Client();
+        $this->client = resolve(ViesClientInterface::class);
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        return [
+            VatValidatorServiceProvider::class,
+        ];
+    }
+
+    public function testItBindsViesClientInterfaceToViesSoapClientImplementation()
+    {
+        $resolved = app(ViesClientInterface::class);
+
+        $this->assertInstanceOf(ViesSoapClient::class, $resolved);
+    }
+
+    public function testVatValidatorInternallyUsesCorrectClient(): void
+    {
+        // Risolvo il validator dal container
+        $validator = app(VatValidator::class);
+
+        // Uso reflection per verificare quale client è iniettato
+        $reflection = new \ReflectionClass($validator);
+        $clientProperty = $reflection->getProperty('client');
+        $clientProperty->setAccessible(true);
+        $client = $clientProperty->getValue($validator);
+
+        // Deve essere un'istanza di Client (SOAP)
+        self::assertInstanceOf(ViesSoapClient::class, $client);
     }
 
     public function testClientEmptyDataException(): void

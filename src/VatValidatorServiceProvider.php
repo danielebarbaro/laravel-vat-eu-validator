@@ -5,6 +5,8 @@ namespace Danielebarbaro\LaravelVatEuValidator;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesClientInterface;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesSoapClient;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -112,6 +114,16 @@ class VatValidatorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(VatValidator::class, static fn (Container $app): VatValidator => new VatValidator());
+        $this->app->bind(
+            ViesClientInterface::class,
+            static fn (Container $app): ViesClientInterface => new ViesSoapClient()
+        );
+
+        $this->app->singleton(
+            VatValidator::class,
+            static fn (Container $app): VatValidator => new VatValidator(
+                $app->make(ViesClientInterface::class)
+            )
+        );
     }
 }

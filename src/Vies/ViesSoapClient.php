@@ -5,7 +5,7 @@ namespace Danielebarbaro\LaravelVatEuValidator\Vies;
 use SoapClient;
 use SoapFault;
 
-class Client
+class ViesSoapClient implements ViesClientInterface
 {
     /**
      * @const string
