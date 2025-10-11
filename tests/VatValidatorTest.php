@@ -3,7 +3,8 @@
 namespace Danielebarbaro\LaravelVatEuValidator\Tests;
 
 use Danielebarbaro\LaravelVatEuValidator\VatValidator;
-use PHPUnit\Framework\TestCase;
+use Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider;
+use Orchestra\Testbench\TestCase;
 
 class VatValidatorTest extends TestCase
 {
@@ -15,8 +16,15 @@ class VatValidatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->validator = new VatValidator();
+        $this->validator = resolve(VatValidator::class);
         $this->fake_vat = 'IT12345678901';
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        return [
+            VatValidatorServiceProvider::class,
+        ];
     }
 
     public function testVatValidFormatFail(): void
