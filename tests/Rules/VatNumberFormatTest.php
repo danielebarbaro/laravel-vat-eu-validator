@@ -4,13 +4,21 @@ namespace Danielebarbaro\LaravelVatEuValidator\Tests\Rules;
 
 use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
+use Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 class VatNumberFormatTest extends TestCase
 {
+    protected function getPackageProviders($app): array
+    {
+        return [
+            VatValidatorServiceProvider::class,
+        ];
+    }
+
     public function testVatNumberFormat(): void
     {
-        $rule = new VatNumberFormat();
+        $rule = resolve(VatNumberFormat::class);
         $fake_vat = 'is_a_fake_vat_string';
 
         VatValidator::shouldReceive('validateFormat')
@@ -25,7 +33,7 @@ class VatNumberFormatTest extends TestCase
 
     public function testVatNumberFormatNotExist(): void
     {
-        $rule = new VatNumberFormat();
+        $rule = resolve(VatNumberFormat::class);
         $fake_vat = 'is_a_fake_vat_string';
 
         VatValidator::shouldReceive('validateFormat')
@@ -34,7 +42,7 @@ class VatNumberFormatTest extends TestCase
             ->andReturn(false);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('laravelVatEuValidator::validation.vat_number_format');
+        $this->expectExceptionMessage(__('laravelVatEuValidator::validation.vat_number_format', ['attribute' => 'vat_number_format']));
 
         $rule->validate('vat_number_format', $fake_vat, static function ($message): never {
             throw new \Exception($message);
