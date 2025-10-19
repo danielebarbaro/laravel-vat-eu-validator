@@ -15,6 +15,7 @@ class VatValidatorFacadeTest extends TestCase
             VatValidatorServiceProvider::class,
         ];
     }
+
     public function testVatValidatorFacade(): void
     {
         $validator = resolve(VatValidator::class);

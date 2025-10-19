@@ -22,6 +22,100 @@ composer require danielebarbaro/laravel-vat-eu-validator
 
 The package will automatically register itself.
 
+## Configuration
+
+### VIES Client Configuration
+
+The package supports multiple VIES clients for VAT validation:
+
+- **SOAP Client** (default): Uses the traditional SOAP API
+- **REST Client**: Uses the modern REST API
+
+To customize the client configuration, publish the configuration file:
+
+```bash
+php artisan vendor:publish --tag=laravel-vat-eu-validator-config
+```
+
+This will create a `config/vat-validator.php` file where you can configure which client to use:
+
+```php
+<?php
+
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesSoapClient;
+
+return [
+    // Select which client to use for VIES validation
+    // Available: ViesSoapClient::CLIENT_NAME, ViesRestClient::CLIENT_NAME
+    'client' => ViesSoapClient::CLIENT_NAME, // Default: SOAP
+
+    'clients' => [
+        ViesSoapClient::CLIENT_NAME => [
+            'timeout' => 10,
+        ],
+        ViesRestClient::CLIENT_NAME => [
+            'timeout' => 10,
+            'base_url' => ViesRestClient::BASE_URL,
+        ],
+    ],
+];
+```
+
+#### Switching to REST Client
+
+To use the REST client instead of SOAP, update your `config/vat-validator.php`:
+
+```php
+'client' => ViesRestClient::CLIENT_NAME,
+```
+
+#### REST Client Authentication
+
+The REST client supports authentication via API key using Basic Authentication. According to the VIES API documentation, you need both an **API Key ID** (identifier) and an **API Key** (secret).
+
+To configure authentication, add both credentials to your `.env` file:
+
+```env
+VIES_API_KEY_ID=your-api-key-id-here
+VIES_API_KEY=your-api-key-secret-here
+```
+
+For the test environment, you can use:
+
+```env
+VIES_API_KEY_ID=test_id
+VIES_API_KEY=test_key
+```
+
+The credentials will be automatically loaded from the environment and used for HTTP Basic Authentication with the VIES REST API. The client sends the API Key ID as the username and the API Key as the password, as per the [VIES API specification](https://viesapi.eu).
+
+**Note:** The VIES API documentation recommends using HMAC SHA256 authentication for production environments for enhanced security. However, this implementation uses Basic Authentication (Method 2) which is simpler and suitable for most use cases.
+
+If you need to customize the API key configuration, you can modify the published config file:
+
+```php
+'clients' => [
+    ViesRestClient::CLIENT_NAME => [
+        'timeout' => 10,
+        'base_url' => ViesRestClient::BASE_URL,
+        'api_key' => env('VIES_API_KEY'), // Your API key
+    ],
+],
+```
+
+#### Customizing Timeout
+
+You can adjust the timeout for API requests:
+
+```php
+'clients' => [
+    ViesSoapClient::CLIENT_NAME => [
+        'timeout' => 30, // seconds
+    ],
+],
+```
+
 ## Usage
 
 ```php
@@ -144,29 +238,33 @@ If not already published, you can edit or fill the translation files using `php 
 
 ### Testing
 
-``` bash
+```bash
+# Run unit tests
 composer test
+
+# Run functional tests (makes actual API calls)
+composer test-functional
 ```
+
+For detailed testing documentation, see [tests/README.md](tests/README.md).
+
+### Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-### Security
+## Security Vulnerabilities
 
-If you discover any security related issues, please email barbaro.daniele@gmail.com instead of using the issue tracker.
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 
-- [Daniele Barbaro](https://daniele.barbaro.online)
-
-## Contributors
+- [Daniele Barbaro](https://github.com/danielebarbaro)
 - [All Contributors](../../contributors)
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).

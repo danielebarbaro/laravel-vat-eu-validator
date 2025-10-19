@@ -6,6 +6,7 @@ use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesClientInterface;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesSoapClient;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\Validator;
@@ -107,6 +108,11 @@ class VatValidatorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/lang' => $this->app->langPath('vendor/laravelVatEuValidator'),
         ], 'laravel-vat-eu-validator-lang');
+
+        // Publish configuration file
+        $this->publishes([
+            __DIR__.'/../config/vat-validator.php' => config_path('vat-validator.php'),
+        ], 'laravel-vat-eu-validator-config');
     }
 
     /**
@@ -114,9 +120,40 @@ class VatValidatorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Merge package configuration with application configuration
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/vat-validator.php',
+            'vat-validator'
+        );
+
+        // Register individual VIES clients
+        $this->app->bind('vies.soap', function (Container $app): ViesSoapClient {
+            $timeout = config('vat-validator.clients.' . ViesSoapClient::CLIENT_NAME . '.timeout', 10);
+
+            return new ViesSoapClient($timeout);
+        });
+
+        $this->app->bind('vies.rest', function (Container $app): ViesRestClient {
+            $apiKeyId = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.api_key_id');
+            $apiKey = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.api_key');
+            $baseUrl = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.base_url', ViesRestClient::BASE_URL);
+            $timeout = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.timeout', 10);
+
+            return new ViesRestClient($apiKeyId, $apiKey, $baseUrl, $timeout);
+        });
+
+        // Register the VIES client interface based on configuration
         $this->app->bind(
             ViesClientInterface::class,
-            static fn (Container $app): ViesClientInterface => new ViesSoapClient()
+            function (Container $app): ViesClientInterface {
+                $clientType = config('vat-validator.client', ViesSoapClient::CLIENT_NAME);
+
+                return match ($clientType) {
+                    ViesSoapClient::CLIENT_NAME => $app->make('vies.soap'),
+                    ViesRestClient::CLIENT_NAME => $app->make('vies.rest'),
+                    default => throw new \InvalidArgumentException("Unknown VIES client type: {$clientType}"),
+                };
+            }
         );
 
         $this->app->singleton(

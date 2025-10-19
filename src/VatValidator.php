@@ -46,7 +46,7 @@ class VatValidator
 
     /**
      * VatValidator constructor.
-     * @param ViesClientInterface|null $client
+     * @param ViesClientInterface $client
      */
     public function __construct(private readonly ViesClientInterface $client)
     {
