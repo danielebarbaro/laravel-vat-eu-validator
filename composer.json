@@ -52,7 +52,8 @@
     "scripts": {
         "rector": "vendor/bin/rector process",
         "rector-dry": "vendor/bin/rector process --dry-run",
-        "test": "vendor/bin/phpunit",
+        "test": "vendor/bin/phpunit --colors=always --testsuite=unit",
+        "test-functional": "vendor/bin/phpunit --colors=always --testsuite=functional",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
         "cs-check": "vendor/bin/phpcs",
         "cs-fix": "vendor/bin/phpcbf",

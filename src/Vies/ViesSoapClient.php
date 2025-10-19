@@ -12,6 +12,11 @@ class ViesSoapClient implements ViesClientInterface
      */
     public const URL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 
+    /**
+     * @const string
+     */
+    public const CLIENT_NAME = 'soap';
+
     private ?\SoapClient $client = null;
 
     /**

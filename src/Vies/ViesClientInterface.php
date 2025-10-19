@@ -16,5 +16,4 @@ interface ViesClientInterface
      * @throws ViesException
      */
     public function check(string $countryCode, string $vatNumber): bool;
-
 }
