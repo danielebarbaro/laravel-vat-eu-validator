@@ -134,12 +134,10 @@ class VatValidatorServiceProvider extends ServiceProvider
         });
 
         $this->app->bind('vies.rest', function (Container $app): ViesRestClient {
-            $apiKeyId = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.api_key_id');
-            $apiKey = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.api_key');
             $baseUrl = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.base_url', ViesRestClient::BASE_URL);
             $timeout = config('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.timeout', 10);
 
-            return new ViesRestClient($apiKeyId, $apiKey, $baseUrl, $timeout);
+            return new ViesRestClient($baseUrl, $timeout);
         });
 
         // Register the VIES client interface based on configuration

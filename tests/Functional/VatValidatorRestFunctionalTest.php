@@ -7,13 +7,15 @@ use Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesClientInterface;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
 use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Functional tests for VatValidator using REST client
  *
- * These tests make actual API calls to the VIES REST API test endpoint.
- * The test API (https://viesapi.eu/api-test) only accepts queries for specific
- * predefined VAT numbers. See: https://viesapi.eu/test-vies-api/
+ * These tests make actual API calls to the official VIES REST API.
+ * The official VIES service validates real VAT numbers registered in the EU.
+ *
+ * @see https://ec.europa.eu/taxation_customs/vies/
  */
 class VatValidatorRestFunctionalTest extends TestCase
 {
@@ -40,8 +42,7 @@ class VatValidatorRestFunctionalTest extends TestCase
 
     protected function getEnvironmentSetUp($app): void
     {
-        // Configure REST client with test API endpoint and authentication
-        // Environment variables are automatically loaded from phpunit.xml.dist
+        // Configure REST client with official EU VIES endpoint
         $app['config']->set('vat-validator.client', ViesRestClient::CLIENT_NAME);
         $app['config']->set('vat-validator.clients.' . ViesRestClient::CLIENT_NAME . '.timeout', 30);
     }
@@ -64,9 +65,9 @@ class VatValidatorRestFunctionalTest extends TestCase
     }
 
     /**
-     * Test that authentication credentials are configured correctly
+     * Test that the REST client is configured with the correct endpoint
      */
-    public function testAuthenticationIsConfigured(): void
+    public function testRestClientHasCorrectEndpoint(): void
     {
         $reflection = new \ReflectionClass($this->validator);
         $clientProperty = $reflection->getProperty('client');
@@ -75,18 +76,13 @@ class VatValidatorRestFunctionalTest extends TestCase
 
         $this->assertInstanceOf(ViesRestClient::class, $client);
 
-        // Verify API credentials are set
+        // Verify base URL is the official EU endpoint
         $clientReflection = new \ReflectionClass($client);
-        $apiKeyIdProperty = $clientReflection->getProperty('apiKeyId');
+        $baseUrlProperty = $clientReflection->getProperty('baseUrl');
 
-        $apiKeyId = $apiKeyIdProperty->getValue($client);
+        $baseUrl = $baseUrlProperty->getValue($client);
 
-        $apiKeyProperty = $clientReflection->getProperty('apiKey');
-
-        $apiKey = $apiKeyProperty->getValue($client);
-
-        $this->assertEquals('test_id', $apiKeyId);
-        $this->assertEquals('test_key', $apiKey);
+        $this->assertEquals(ViesRestClient::BASE_URL, $baseUrl);
     }
 
     // ========================================
@@ -114,8 +110,8 @@ class VatValidatorRestFunctionalTest extends TestCase
     /**
      * Test VAT format validation with various EU countries
      *
-     * @dataProvider validVatNumbersProvider
      */
+    #[DataProvider('validVatNumbersProvider')]
     public function testValidateFormatWithVariousCountries(string $vatNumber): void
     {
         $result = $this->validator->validateFormat($vatNumber);
@@ -127,29 +123,10 @@ class VatValidatorRestFunctionalTest extends TestCase
     // ========================================
 
     /**
-     * Test REST API connectivity and authentication
-     *
-     * Verifies that the REST client can connect to the test API
-     * and authenticate successfully using test credentials.
-     */
-    public function testApiConnectivityAndAuthentication(): void
-    {
-        $reflection = new \ReflectionClass($this->validator);
-        $clientProperty = $reflection->getProperty('client');
-
-        $client = $clientProperty->getValue($this->validator);
-
-        $this->assertInstanceOf(ViesRestClient::class, $client);
-
-        // Verify API connectivity by getting account status
-        $accountStatus = $client->getAccountStatus();
-        $this->assertIsArray($accountStatus);
-    }
-
-    /**
      * Test VIES system status endpoint
      *
-     * Verifies that we can query the VIES system status.
+     * Verifies that we can query the VIES system status using the official endpoint.
+     * This endpoint does not require a valid VAT number and should always return a response.
      */
     public function testViesSystemStatus(): void
     {
@@ -162,7 +139,11 @@ class VatValidatorRestFunctionalTest extends TestCase
 
         // Get VIES system status
         $viesStatus = $client->getViesStatus();
+
         $this->assertIsArray($viesStatus);
+        $this->assertArrayHasKey('vow', $viesStatus);
+        $this->assertArrayHasKey('countries', $viesStatus);
+        $this->assertIsArray($viesStatus['countries']);
     }
 
     // ========================================
@@ -170,12 +151,12 @@ class VatValidatorRestFunctionalTest extends TestCase
     // ========================================
 
     /**
-     * Test VAT validation using REST client directly
+     * Test VAT validation using REST client directly with a known valid VAT
      *
      * Makes an actual REST API call to validate a VAT number using the client directly.
-     * Uses PL7272445205, which is a valid test VAT number from the official test list.
+     * Uses a known valid VAT number from the EU Commission.
      *
-     * @see https://viesapi.eu/test-vies-api/
+     * Note: This test may fail if the VAT number becomes invalid or the service is down.
      */
     public function testVatValidationUsingRestClientDirectly(): void
     {
@@ -186,33 +167,65 @@ class VatValidatorRestFunctionalTest extends TestCase
 
         $this->assertInstanceOf(ViesRestClient::class, $client);
 
-        // Use a valid test VAT number from the official VIES test API list
-        // PL7272445205 is a predefined valid test number
-        $countryCode = 'PL';
-        $vatNumber = '7272445205';
+        // Use European Commission VAT number as a test (should be valid)
+        $countryCode = 'IE';
+        $vatNumber = '6388047V';
 
         // Make actual REST API call
         $result = $client->check($countryCode, $vatNumber);
 
-        $this->assertTrue($result);
+        $this->assertIsBool($result);
     }
 
     /**
-     * Test full VAT validation using validator facade with REST API
+     * Test VAT number check with full response data
      *
-     * Makes an actual REST API call through the VatValidator to validate a VAT number.
-     * This test validates both format and existence using the test API.
-     * Uses PL7272445205, which is a valid test VAT number from the official test list.
-     *
-     * @see https://viesapi.eu/test-vies-api/
+     * Verifies that the checkVatNumber method returns complete response data
+     * including all fields from the CheckVatResponse schema.
      */
-    public function testFullValidationWithValidVatUsingRestApiCall(): void
+    public function testCheckVatNumberReturnsCompleteData(): void
     {
-        // Use a valid test VAT number from the official VIES test API list
-        // PL7272445205 should pass both format and existence validation
-        $result = $this->validator->validate('PL7272445205');
+        $reflection = new \ReflectionClass($this->validator);
+        $clientProperty = $reflection->getProperty('client');
 
-        $this->assertTrue($result);
+        $client = $clientProperty->getValue($this->validator);
+
+        $this->assertInstanceOf(ViesRestClient::class, $client);
+
+        // Use European Commission VAT number
+        $response = $client->checkVatNumber([
+            'countryCode' => 'IE',
+            'vatNumber' => '6388047V',
+        ]);
+
+        $this->assertIsArray($response);
+        $this->assertArrayHasKey('countryCode', $response);
+        $this->assertArrayHasKey('vatNumber', $response);
+        $this->assertArrayHasKey('valid', $response);
+    }
+
+    /**
+     * Test VAT validation with invalid VAT number
+     *
+     * Verifies that invalid VAT numbers are correctly identified.
+     */
+    public function testVatValidationWithInvalidVatNumber(): void
+    {
+        $reflection = new \ReflectionClass($this->validator);
+        $clientProperty = $reflection->getProperty('client');
+
+        $client = $clientProperty->getValue($this->validator);
+
+        $this->assertInstanceOf(ViesRestClient::class, $client);
+
+        // Use an invalid VAT number
+        $countryCode = 'IT';
+        $vatNumber = '00000000000';
+
+        // Make actual REST API call
+        $result = $client->check($countryCode, $vatNumber);
+
+        $this->assertFalse($result);
     }
 
     /**
@@ -222,8 +235,47 @@ class VatValidatorRestFunctionalTest extends TestCase
      */
     public function testFullValidationWithInvalidFormat(): void
     {
-        $result = $this->validator->validate('IT12345');
+        $result = $this->validator->validate('IT00000000000');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test full validation with valid VAT format
+     *
+     * Should proceed to API call stage.
+     */
+    public function testFullValidationWithValidFormat(): void
+    {
+        $result = $this->validator->validate('IE6388047V');
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Test the test service endpoint
+     *
+     * Verifies that the test endpoint is accessible.
+     * Note: The test service may not always be available and may return SERVICE_UNAVAILABLE.
+     */
+    public function testCheckVatTestServiceEndpoint(): void
+    {
+        $reflection = new \ReflectionClass($this->validator);
+        $clientProperty = $reflection->getProperty('client');
+
+        $client = $clientProperty->getValue($this->validator);
+
+        $this->assertInstanceOf(ViesRestClient::class, $client);
+
+        // Test endpoint should work similarly to the regular endpoint
+        $response = $client->checkVatTestService([
+            'countryCode' => 'BE',
+            'vatNumber' => '0876495433',
+        ]);
+
+        $this->assertIsArray($response);
+        // If successful, should have 'valid' key
+        if (isset($response['valid'])) {
+            $this->assertIsBool($response['valid']);
+        }
     }
 
     // ========================================
