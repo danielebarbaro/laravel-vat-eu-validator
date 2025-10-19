@@ -38,9 +38,4 @@
             <directory suffix=".php">src/</directory>
         </include>
     </source>
-    <php>
-        <env name="VIES_API_BASE_URL" value="https://viesapi.eu/api-test"/>
-        <env name="VIES_API_KEY_ID" value="test_id"/>
-        <env name="VIES_API_KEY" value="test_key"/>
-    </php>
 </phpunit>

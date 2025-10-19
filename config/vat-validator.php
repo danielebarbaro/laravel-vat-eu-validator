@@ -24,9 +24,7 @@ return [
 
         ViesRestClient::CLIENT_NAME => [
             'timeout' => 10,
-            'base_url' => env('VIES_API_BASE_URL', ViesRestClient::BASE_URL),
-            'api_key_id' => env('VIES_API_KEY_ID'),
-            'api_key' => env('VIES_API_KEY'),
+            'base_url' => env('VIES_REST_BASE_URL', ViesRestClient::BASE_URL),
         ],
     ],
 ];

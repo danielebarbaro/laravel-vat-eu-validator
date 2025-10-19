@@ -18,7 +18,7 @@ vendor/bin/phpunit --testsuite=unit
 ```
 
 ### 2. Functional Tests
-Functional tests make actual API calls to VIES services to validate VAT numbers.
+Functional tests make actual API calls to the official European Commission VIES services to validate VAT numbers.
 
 ```bash
 # Run functional tests
@@ -34,97 +34,32 @@ vendor/bin/phpunit tests/Functional/VatValidatorRestFunctionalTest.php
 
 ## Functional Test Configuration
 
-Functional tests use environment variables defined in `phpunit.xml.dist`:
+### REST Client Tests
 
-```xml
-<php>
-    <env name="VIES_API_BASE_URL" value="https://viesapi.eu/api-test"/>
-    <env name="VIES_API_KEY_ID" value="test_id"/>
-    <env name="VIES_API_KEY" value="test_key"/>
-</php>
-```
+The REST client uses the **official European Commission VIES REST API** which does not require authentication or API keys:
 
-### Customizing Test Environment
+- **Endpoint**: `https://ec.europa.eu/taxation_customs/vies/rest-api`
+- **Authentication**: None required
+- **Documentation**: https://ec.europa.eu/taxation_customs/vies/
 
-To use different credentials or endpoints:
+The REST functional tests validate real VAT numbers registered in the EU VIES system.
 
-**Option 1: Create a local phpunit.xml** (recommended for development)
-```bash
-cp phpunit.xml.dist phpunit.xml
-# Edit phpunit.xml and modify the <php> section
-```
+### SOAP Client Tests
 
-**Option 2: Use environment variables**
-```bash
-VIES_API_BASE_URL=https://viesapi.eu/api \
-VIES_API_KEY_ID=your_key_id \
-VIES_API_KEY=your_key \
-vendor/bin/phpunit --testsuite=functional
-```
+The SOAP client uses the traditional VIES SOAP service:
 
-## VIES Test API Limitations
+- **Endpoint**: `http://ec.europa.eu/taxation_customs/vies/services/checkVatService`
+- **Authentication**: None required
 
-The VIES test API (`https://viesapi.eu/api-test`) works exactly like the production API but **only accepts queries for specific test VAT numbers**.
+## Testing with Real VAT Numbers
 
-### Valid Test VAT Numbers
+Both SOAP and REST functional tests use real VAT numbers from the European Commission and other EU institutions. These tests may occasionally fail if:
 
-The test API can only validate these predefined EU VAT numbers:
+- The VIES service is temporarily unavailable
+- A VAT number becomes invalid or is deregistered
+- Network connectivity issues occur
 
-| Country | VAT Numbers |
-|---------|-------------|
-| **Austria** | ATU74581419 |
-| **Belgium** | BE0835221567 |
-| **Bulgaria** | BG202211464 |
-| **Croatia** | HR79147056526 |
-| **Cyprus** | CY10137629O |
-| **Czech Republic** | CZ7710043187 |
-| **Denmark** | DK56314210 |
-| **Estonia** | EE100110874 |
-| **Finland** | FI23064613 |
-| **France** | FR10402571889 |
-| **Germany** | DE327990207 |
-| **Greece** | EL801116623 |
-| **Hungary** | HU29312757 |
-| **Ireland** | IE8251135U |
-| **Italy** | IT06903461215 |
-| **Latvia** | LV40203202898 |
-| **Lithuania** | LT100005828314 |
-| **Luxembourg** | LU22108711 |
-| **Malta** | MT26572515 |
-| **Netherlands** | NL863726392B01 |
-| **Poland** | PL7272445205, PL5213003700, PL5252242171, PL7171642051 |
-| **Portugal** | PT501613897 |
-| **Romania** | RO14388698 |
-| **Slovakia** | SK2022210311 |
-| **Slovenia** | SI51510847 |
-| **Spain** | ES38076731R |
-| **Sweden** | SE556037867001 |
-
-For more information: https://viesapi.eu/test-vies-api/
-
-## Testing with Production API
-
-To test with real VAT numbers using the production VIES API:
-
-1. **Create an account** at https://viesapi.eu
-2. **Obtain API credentials** (API Key ID and API Key)
-3. **Configure environment variables** in `phpunit.xml`:
-
-```xml
-<php>
-    <env name="VIES_API_BASE_URL" value="https://viesapi.eu/api"/>
-    <env name="VIES_API_KEY_ID" value="your_real_key_id"/>
-    <env name="VIES_API_KEY" value="your_real_api_key"/>
-</php>
-```
-
-Or use environment variables:
-```bash
-VIES_API_BASE_URL=https://viesapi.eu/api \
-VIES_API_KEY_ID=your_real_key_id \
-VIES_API_KEY=your_real_api_key \
-composer test-functional
-```
+This is normal for functional tests that depend on external services.
 
 ## Functional Test Organization
 

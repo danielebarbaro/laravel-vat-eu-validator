@@ -70,39 +70,22 @@ To use the REST client instead of SOAP, update your `config/vat-validator.php`:
 'client' => ViesRestClient::CLIENT_NAME,
 ```
 
-#### REST Client Authentication
+The REST client uses the official European Commission VIES REST API endpoints, which do not require authentication or API keys.
 
-The REST client supports authentication via API key using Basic Authentication. According to the VIES API documentation, you need both an **API Key ID** (identifier) and an **API Key** (secret).
+#### Customizing REST Client Configuration
 
-To configure authentication, add both credentials to your `.env` file:
-
-```env
-VIES_API_KEY_ID=your-api-key-id-here
-VIES_API_KEY=your-api-key-secret-here
-```
-
-For the test environment, you can use:
-
-```env
-VIES_API_KEY_ID=test_id
-VIES_API_KEY=test_key
-```
-
-The credentials will be automatically loaded from the environment and used for HTTP Basic Authentication with the VIES REST API. The client sends the API Key ID as the username and the API Key as the password, as per the [VIES API specification](https://viesapi.eu).
-
-**Note:** The VIES API documentation recommends using HMAC SHA256 authentication for production environments for enhanced security. However, this implementation uses Basic Authentication (Method 2) which is simpler and suitable for most use cases.
-
-If you need to customize the API key configuration, you can modify the published config file:
+You can customize the REST client timeout and base URL if needed:
 
 ```php
 'clients' => [
     ViesRestClient::CLIENT_NAME => [
-        'timeout' => 10,
-        'base_url' => ViesRestClient::BASE_URL,
-        'api_key' => env('VIES_API_KEY'), // Your API key
+        'timeout' => 10, // seconds
+        'base_url' => env('VIES_REST_BASE_URL', ViesRestClient::BASE_URL),
     ],
 ],
 ```
+
+By default, the client uses the official EU endpoint: `https://ec.europa.eu/taxation_customs/vies/rest-api`
 
 #### Customizing Timeout
 
@@ -248,23 +231,25 @@ composer test-functional
 
 For detailed testing documentation, see [tests/README.md](tests/README.md).
 
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-## Security Vulnerabilities
+### Security
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+If you discover any security related issues, please email barbaro.daniele@gmail.com instead of using the issue tracker.
 
 ## Credits
 
-- [Daniele Barbaro](https://github.com/danielebarbaro)
+- [Daniele Barbaro](https://daniele.barbaro.online)
+
+## Contributors
 - [All Contributors](../../contributors)
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+## Laravel Package Boilerplate
+
+This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).

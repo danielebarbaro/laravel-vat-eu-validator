@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Http;
 class ViesRestClient implements ViesClientInterface
 {
     /**
+     * Official EU VIES REST API base URL
+     *
      * @const string
      */
-    public const BASE_URL = 'https://viesapi.eu/api';
+    public const BASE_URL = 'https://ec.europa.eu/taxation_customs/vies/rest-api';
 
     /**
      * @const string
@@ -23,61 +25,28 @@ class ViesRestClient implements ViesClientInterface
      *
      * @param string $baseUrl
      * @param int $timeout
-     * @param string $apiKeyId API key identifier for Basic Authentication
-     * @param string $apiKey API key for Basic Authentication
      */
     public function __construct(
-        protected string $apiKeyId,
-        protected string $apiKey,
         protected string $baseUrl = self::BASE_URL,
         protected int $timeout = 10,
     ) {
     }
 
     /**
-     * Get the HTTP client with authentication
+     * Get the HTTP client
      *
      * @return PendingRequest
      */
     protected function getClient(): PendingRequest
     {
-        $client = Http::timeout($this->timeout)
-            ->acceptJson();
-
-        // Apply authentication if credentials are provided
-        if ($this->hasAuthentication()) {
-            $client = $this->withAuthentication($client);
-        }
-
-        return $client;
-    }
-
-    /**
-     * Check if authentication credentials are available
-     *
-     * @return bool
-     */
-    private function hasAuthentication(): bool
-    {
-        return ! empty($this->apiKeyId) && ! empty($this->apiKey);
-    }
-
-    /**
-     * Apply authentication to the HTTP client
-     * VIES API uses Basic Authentication with key_id as username and key as password
-     *
-     * @param PendingRequest $client
-     * @return PendingRequest
-     */
-    private function withAuthentication(PendingRequest $client): PendingRequest
-    {
-        // Method 2: Basic Authentication
-        // Authorization: Basic base64(key_id:key)
-        return $client->withBasicAuth($this->apiKeyId, $this->apiKey);
+        return Http::timeout($this->timeout)
+            ->acceptJson()
+            ->contentType('application/json');
     }
 
     /**
      * Check via Vies REST API the VAT number
+     *
      * @param string $countryCode
      * @param string $vatNumber
      *
@@ -87,129 +56,134 @@ class ViesRestClient implements ViesClientInterface
      */
     public function check(string $countryCode, string $vatNumber): bool
     {
-        $data = $this->getVatInfo($countryCode, $vatNumber);
+        $data = $this->checkVatNumber([
+            'countryCode' => $countryCode,
+            'vatNumber' => $vatNumber,
+        ]);
 
         if (isset($data['valid'])) {
-            return (bool)$data['valid'];
+            return (bool) $data['valid'];
         }
 
         throw new ViesException('Invalid response format from VIES REST API');
     }
 
     /**
-     * Get detailed VAT information
+     * Check a VAT number for a specific country
      *
-     * @param string $countryCode
-     * @param string $vatNumber
-     * @param bool $parsed Whether to get parsed address components
+     * Official endpoint: POST /check-vat-number
+     *
+     * @param array $requestData Request body according to CheckVatRequest schema
+     * @return array CheckVatResponse data
+     * @throws ViesException
+     */
+    public function checkVatNumber(array $requestData): array
+    {
+        return $this->performVatCheck('/check-vat-number', $requestData);
+    }
+
+    /**
+     * Test the check VAT service
+     *
+     * Official endpoint: POST /check-vat-test-service
+     *
+     * @param array $requestData Request body according to CheckVatRequest schema
+     * @return array CheckVatResponse data
+     * @throws ViesException
+     */
+    public function checkVatTestService(array $requestData): array
+    {
+        return $this->performVatCheck('/check-vat-test-service', $requestData);
+    }
+
+    /**
+     * Perform a VAT check request to the specified endpoint
+     *
+     * @param string $endpoint
+     * @param array $requestData
      * @return array
      * @throws ViesException
      */
-    private function getVatInfo(string $countryCode, string $vatNumber, bool $parsed = false): array
+    private function performVatCheck(string $endpoint, array $requestData): array
     {
         try {
-            $euVatNumber = $countryCode . $vatNumber;
-
-            $endpoint = $parsed
-                ? "/get/vies/parsed/euvat/{$euVatNumber}"
-                : "/get/vies/euvat/{$euVatNumber}";
-
             $response = $this->getClient()
-                ->get("{$this->baseUrl}{$endpoint}");
+                ->post("{$this->baseUrl}{$endpoint}", $requestData);
 
             if ($response->failed()) {
+                $data = $response->json();
+
+                // Handle error response according to CommonResponse schema
+                if (isset($data['actionSucceed']) && $data['actionSucceed'] === false) {
+                    $errorMessage = $this->formatErrorMessage($data);
+
+                    throw new ViesException($errorMessage, $response->status());
+                }
+
                 throw new ViesException(
                     'VIES REST API request failed: ' . $response->body(),
                     $response->status()
                 );
             }
 
-            $data = $response->json();
-
-            // Handle error response
-            if (isset($data['error'])) {
-                throw new ViesException(
-                    $data['error']['description'] ?? 'VIES API error',
-                    $data['error']['code'] ?? 0
-                );
-            }
-
-            // Return VIES data
-            if (isset($data['vies'])) {
-                return $data['vies'];
-            }
-
-            throw new ViesException('Invalid response format from VIES REST API');
+            return $response->json();
         } catch (ConnectionException $e) {
             throw new ViesException($e->getMessage(), $e->getCode());
         }
     }
 
     /**
-     * Get account status
+     * Format error message from CommonResponse
      *
-     * @return array
-     * @throws ViesException
+     * @param array $data
+     * @return string
      */
-    public function getAccountStatus(): array
+    private function formatErrorMessage(array $data): string
     {
-        try {
-            $response = $this->getClient()
-                ->get("{$this->baseUrl}/check/account/status");
+        if (isset($data['errorWrappers']) && is_array($data['errorWrappers'])) {
+            $errors = array_map(function ($wrapper) {
+                $error = $wrapper['error'] ?? 'Unknown error';
+                $message = $wrapper['message'] ?? '';
 
-            if ($response->failed()) {
-                throw new ViesException(
-                    'VIES REST API request failed: ' . $response->body(),
-                    $response->status()
-                );
-            }
+                return $message ? "{$error}: {$message}" : $error;
+            }, $data['errorWrappers']);
 
-            $data = $response->json();
-
-            // Handle error response
-            if (isset($data['error'])) {
-                throw new ViesException(
-                    $data['error']['description'] ?? 'VIES API error',
-                    $data['error']['code'] ?? 0
-                );
-            }
-
-            return $data['account'] ?? $data;
-        } catch (ConnectionException $e) {
-            throw new ViesException($e->getMessage(), $e->getCode());
+            return 'VIES API errors: ' . implode(', ', $errors);
         }
+
+        return 'VIES API request failed';
     }
 
     /**
-     * Get VIES system status
+     * Get VIES system status and member states availability
      *
-     * @return array
+     * Official endpoint: GET /check-status
+     *
+     * @return array StatusInformationResponse data
      * @throws ViesException
      */
     public function getViesStatus(): array
     {
         try {
             $response = $this->getClient()
-                ->get("{$this->baseUrl}/check/vies/status");
+                ->get("{$this->baseUrl}/check-status");
 
             if ($response->failed()) {
+                $data = $response->json();
+
+                if (isset($data['actionSucceed']) && $data['actionSucceed'] === false) {
+                    $errorMessage = $this->formatErrorMessage($data);
+
+                    throw new ViesException($errorMessage, $response->status());
+                }
+
                 throw new ViesException(
                     'VIES REST API request failed: ' . $response->body(),
                     $response->status()
                 );
             }
 
-            $data = $response->json();
-
-            // Handle error response
-            if (isset($data['error'])) {
-                throw new ViesException(
-                    $data['error']['description'] ?? 'VIES API error',
-                    $data['error']['code'] ?? 0
-                );
-            }
-
-            return $data['vies'] ?? $data;
+            return $response->json();
         } catch (ConnectionException $e) {
             throw new ViesException($e->getMessage(), $e->getCode());
         }
