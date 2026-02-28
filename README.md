@@ -1,16 +1,27 @@
-Laravel VAT EU VALIDATOR
-================
+# Laravel VAT EU VALIDATOR
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/run-tests?label=tests)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/Check%20&%20fix%20styling?label=code%20style)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/Check%20%26%20fix%20styling?label=code%20style)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3A%22Check+%26+fix+styling%22+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
-#### For Laravel 10, 11, 12 use tag 2.x
+#### For Laravel 10, 11, 12 use tag 3.x
+
+#### For Laravel 10, 11, 12 use tag 2.x (legacy SOAP-only)
+
 #### For Laravel 8, 9 use tag 1.20
+
 #### For Laravel 5, 6, 7 use tag 0.5.4
+
+## What's new in v3.0
+
+- **REST Client support**: an alternative to the traditional SOAP client, using the official European Commission REST APIs
+- **Strategy Pattern architecture**: ViesClientInterface interface with ViesSoapClient and ViesRestClient implementations
+- **Publishable configuration file**: choose which client to use and configure its parameters
+- **Restructured test suite**: separation between unit and functional tests
+- **PHP 8.4 e 8.5 support**
 
 ## Installation
 
@@ -112,7 +123,6 @@ VatValidator::validateFormat('IT12345678901');
 
 // Check VAT existence
 VatValidator::validateExistence('IT12345678901');
-
 ```
 
 #### Validation
@@ -215,6 +225,7 @@ class Controller {
 ```
 
 ### Translations
+
 Most of the displayed strings are defined in the `vatEuValidator::validation` translation files. The package ships with a few supported locales, but if yours is not yet included we would greatly appreciate a PR.
 
 If not already published, you can edit or fill the translation files using `php artisan vendor:publish --tag=laravel-vat-eu-validator-lang`, this will copy our translation files to your app's `vendor/laravelVatEuValidator` "lang" path.
@@ -231,6 +242,37 @@ composer test-functional
 
 For detailed testing documentation, see [tests/README.md](tests/README.md).
 
+## Upgrading from v2.x to v3.0
+
+### No changes needed if you use the package as-is
+The package works out-of-the-box with SOAP as the default client, exactly as before.
+
+### If you were instantiating `VatValidator` or `Client` manually
+
+```php
+// ❌ Before (v2.x)
+use Danielebarbaro\LaravelVatEuValidator\Vies\Client;
+$validator = new VatValidator(new Client());
+
+// ✅ After (v3.0)
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesSoapClient;
+$validator = new VatValidator(new ViesSoapClient());
+
+// Or with REST client
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
+$validator = new VatValidator(new ViesRestClient());
+```
+
+### If you want to switch to the REST client
+1. Publish the configuration: `php artisan vendor:publish --tag=laravel-vat-eu-validator-config`
+2. Update `config/vat-validator.php`:
+```php
+'client' => ViesRestClient::CLIENT_NAME,
+```
+
+### If your tests reference `Vies\Client`
+Update references to `ViesSoapClient` or use `ViesClientInterface` for mocking.
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
@@ -244,6 +286,7 @@ If you discover any security related issues, please email barbaro.daniele@gmail.
 - [Daniele Barbaro](https://daniele.barbaro.online)
 
 ## Contributors
+
 - [All Contributors](../../contributors)
 
 ## License
