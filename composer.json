@@ -23,15 +23,15 @@
     ],
     "require": {
         "php": "^8.2",
-        "ext-soap": "*",
         "ext-openssl": "*",
+        "ext-soap": "*",
         "illuminate/contracts": "^10.0|^11.0|^12.0",
         "illuminate/support": "^10.0|^11.0|^12.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.59",
-        "orchestra/testbench": "^8.1|^9.1|^10.0",
+        "orchestra/testbench": "^v8.37.0|^v9.16.0|^v10.9.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
