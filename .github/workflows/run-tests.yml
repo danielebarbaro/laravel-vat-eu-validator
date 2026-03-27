@@ -30,6 +30,9 @@ jobs:
           - laravel: 13.*
             testbench: ^11.0
         exclude:
+          # PHP 8.2 does not support Laravel 13
+          - php: 8.2
+            laravel: 13.*
           # PHP 8.4 does not support Laravel 10
           - php: 8.4
             laravel: 10.*
