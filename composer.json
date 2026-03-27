@@ -25,18 +25,18 @@
         "php": "^8.2",
         "ext-openssl": "*",
         "ext-soap": "*",
-        "illuminate/contracts": "^10.0|^11.0|^12.0",
-        "illuminate/support": "^10.0|^11.0|^12.0"
+        "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.59",
-        "orchestra/testbench": "^v8.37.0|^v9.16.0|^v10.9.0",
+        "orchestra/testbench": "^v8.37.0|^v9.16.0|^v10.9.0|^v11.0.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^10.5|^11.0",
+        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0",
         "rector/rector": "^2.0"
     },
     "autoload": {
