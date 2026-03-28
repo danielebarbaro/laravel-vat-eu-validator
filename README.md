@@ -1,13 +1,13 @@
 # Laravel VAT EU VALIDATOR
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/run-tests?label=tests)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/danielebarbaro/laravel-vat-eu-validator/Check%20%26%20fix%20styling?label=code%20style)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3A%22Check+%26+fix+styling%22+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/danielebarbaro/laravel-vat-eu-validator/run-tests.yml?branch=main&label=tests)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/danielebarbaro/laravel-vat-eu-validator/php-cs-fixer.yml?branch=main&label=code%20style)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3A%22Check+%26+fix+styling%22+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
 
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
-#### For Laravel 10, 11, 12 use tag 3.x
+#### For Laravel 10, 11, 12, 13 use tag 3.x
 
 #### For Laravel 10, 11, 12 use tag 2.x (legacy SOAP-only)
 
