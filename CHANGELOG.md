@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Laravel 13 support - 2026-03-28
+
+Thanks to @sergix44 , we now have compatibility with Laravel 13! 🚀
+
 ## REST API Support - 2026-02-28
 
 ### Changelog v3.0.0
@@ -55,10 +59,12 @@ All notable changes to `laravel-vat-eu-validator` will be documented in this fil
 ##### Complete test suite restructuring
 
 - **Test suite separation**: tests are now split into `unit` and `functional`:
+  
   - `tests/` (unit) — mocked tests, run in CI
   - `tests/Functional/` — tests making actual API calls to VIES
   
 - **New test files**:
+  
   - `tests/Functional/VatValidatorRestFunctionalTest.php` — functional tests for the REST client
   - `tests/Functional/VatValidatorSoapFunctionalTest.php` — functional tests for the SOAP client
   - `tests/Rules/VatNumberExistTest.php` — tests for the VatNumberExist rule
@@ -69,7 +75,9 @@ All notable changes to `laravel-vat-eu-validator` will be documented in this fil
   - `tests/Vies/ViesTest.php` — tests for the VIES clients
   
 - **New test documentation**: `tests/README.md` with a complete testing guide
+  
 - **Updated Composer scripts**:
+  
   - `composer test` → runs only the `unit` test suite
   - `composer test-functional` → runs only the `functional` test suite
   
@@ -115,6 +123,7 @@ $validator = new VatValidator(new ViesSoapClient());
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
 $validator = new VatValidator(new ViesRestClient());
 
+
 ```
 ##### If you want to switch to the REST client
 
@@ -123,6 +132,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 ```php
 'client' => ViesRestClient::CLIENT_NAME,
+
 
 ```
 ##### If your tests reference `Vies\Client`
