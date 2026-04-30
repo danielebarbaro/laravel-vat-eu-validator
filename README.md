@@ -123,6 +123,43 @@ VatValidator::validateFormat('IT12345678901');
 
 // Check VAT existence
 VatValidator::validateExistence('IT12345678901');
+
+// Look up the full VIES record
+VatValidator::lookup('IE6364992H');
+```
+
+#### Lookup
+
+`lookup()` returns a typed `VatLookupResult` DTO with the full VIES record, instead of just a boolean. The format is validated locally first; if it doesn't match the country pattern, a `ViesException` is thrown without calling the VIES API.
+
+```php
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
+use Danielebarbaro\LaravelVatEuValidator\VatLookupResult;
+
+$result = VatValidator::lookup('IE6364992H');
+
+$result->valid;       // bool
+$result->countryCode; // string  — e.g. "IE"
+$result->vatNumber;   // string  — e.g. "6364992H"
+$result->name;        // ?string — registered company name
+$result->address;     // ?string — registered address
+$result->requestDate; // ?DateTimeImmutable
+
+// Trader / match fields are populated only by the REST client
+// and will be null when the SOAP client is in use.
+$result->requestIdentifier;
+$result->traderName;
+$result->traderStreet;
+$result->traderPostalCode;
+$result->traderCity;
+$result->traderCompanyType;
+$result->traderNameMatch;
+$result->traderStreetMatch;
+$result->traderPostalCodeMatch;
+$result->traderCityMatch;
+$result->traderCompanyTypeMatch;
+
+$result->toArray(); // array<string, mixed> — useful for logging or JSON responses
 ```
 
 #### Validation

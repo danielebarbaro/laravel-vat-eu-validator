@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Add VatLookupResult DTO and lookup method - 2026-04-30
+
+New `VatValidator::lookup()` method that returns a typed `VatLookupResult` DTO with the full VIES record (name, address, request date, and — when using the REST client — trader and match fields), instead of just a boolean. The format is validated locally first, so invalid VAT numbers throw a `ViesException` without hitting the VIES API.
+
+`ViesClientInterface` gains a `lookup()` method, implemented by both `ViesSoapClient` and `ViesRestClient`.
+
 ## Laravel 13 support - 2026-03-28
 
 Thanks to @sergix44 , we now have compatibility with Laravel 13! 🚀
