@@ -123,44 +123,78 @@ VatValidator::validateFormat('IT12345678901');
 
 // Check VAT existence
 VatValidator::validateExistence('IT12345678901');
-
-// Look up the full VIES record
-VatValidator::lookup('IE6364992H');
 ```
 
-#### Lookup
+#### Looking up the full VIES record
 
-`lookup()` returns a typed `VatLookupResult` DTO with the full VIES record, instead of just a boolean. The format is validated locally first; if it doesn't match the country pattern, a `ViesException` is thrown without calling the VIES API.
+`lookup()` returns a typed `VatLookupResult` DTO with the trader name, address,
+request date, and (when the REST client is in use) the trader / match fields
+exposed by the official endpoint. The VAT format is validated locally first;
+an invalid format throws a `ViesException` without calling the API.
 
 ```php
 use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
-use Danielebarbaro\LaravelVatEuValidator\VatLookupResult;
 
-$result = VatValidator::lookup('IE6364992H');
+$result = VatValidator::lookup('IE6388047V');
 
-$result->valid;       // bool
-$result->countryCode; // string  — e.g. "IE"
-$result->vatNumber;   // string  — e.g. "6364992H"
-$result->name;        // ?string — registered company name
-$result->address;     // ?string — registered address
-$result->requestDate; // ?DateTimeImmutable
-
-// Trader / match fields are populated only by the REST client
-// and will be null when the SOAP client is in use.
-$result->requestIdentifier;
-$result->traderName;
-$result->traderStreet;
-$result->traderPostalCode;
-$result->traderCity;
-$result->traderCompanyType;
-$result->traderNameMatch;
-$result->traderStreetMatch;
-$result->traderPostalCodeMatch;
-$result->traderCityMatch;
-$result->traderCompanyTypeMatch;
-
-$result->toArray(); // array<string, mixed> — useful for logging or JSON responses
+$result->valid;        // bool
+$result->name;         // ?string
+$result->address;      // ?string
+$result->requestDate;  // ?DateTimeImmutable
+$result->traderName;   // ?string (REST only)
+$result->toArray();    // array<string, mixed>
 ```
+
+The trader-* and `requestIdentifier` fields are only populated by the REST
+client; under SOAP they are `null`.
+
+#### Error handling
+
+All VIES failures surface as `Danielebarbaro\LaravelVatEuValidator\Vies\ViesException`.
+For the REST client, this includes both transport-level failures (timeouts,
+HTTP 5xx) and application-level failures where the API returns HTTP 200 with
+`{"actionSucceed": false, "errorWrappers": [...]}`.
+
+The exception exposes the error codes from `errorWrappers` so callers can
+branch on rate limits and member-state outages vs. permanent errors. Known
+codes are available as constants on `ViesException`:
+
+| Constant | API code |
+|---|---|
+| `ERROR_INVALID_INPUT` | `INVALID_INPUT` |
+| `ERROR_INVALID_REQUESTER_INFO` | `INVALID_REQUESTER_INFO` |
+| `ERROR_SERVICE_UNAVAILABLE` | `SERVICE_UNAVAILABLE` |
+| `ERROR_MS_UNAVAILABLE` | `MS_UNAVAILABLE` |
+| `ERROR_TIMEOUT` | `TIMEOUT` |
+| `ERROR_VAT_BLOCKED` | `VAT_BLOCKED` |
+| `ERROR_IP_BLOCKED` | `IP_BLOCKED` |
+| `ERROR_GLOBAL_MAX_CONCURRENT_REQ` | `GLOBAL_MAX_CONCURRENT_REQ` |
+| `ERROR_GLOBAL_MAX_CONCURRENT_REQ_TIME` | `GLOBAL_MAX_CONCURRENT_REQ_TIME` |
+| `ERROR_MS_MAX_CONCURRENT_REQ` | `MS_MAX_CONCURRENT_REQ` |
+| `ERROR_MS_MAX_CONCURRENT_REQ_TIME` | `MS_MAX_CONCURRENT_REQ_TIME` |
+
+```php
+use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
+use Danielebarbaro\LaravelVatEuValidator\Vies\ViesException;
+
+try {
+    $result = VatValidator::lookup('IT00743110157');
+} catch (ViesException $e) {
+    if ($e->isTransient()) {
+        // Retry with backoff — VIES is rate-limiting or a Member State is down.
+    }
+
+    if ($e->hasErrorCode(ViesException::ERROR_INVALID_INPUT)) {
+        // Permanent: invalid VAT input.
+    }
+
+    $e->getErrorCodes(); // ['MS_MAX_CONCURRENT_REQ', ...]
+}
+```
+
+`isTransient()` returns `true` for `SERVICE_UNAVAILABLE`, `MS_UNAVAILABLE`,
+`TIMEOUT`, and any of the concurrency / rate-limit codes — i.e. errors where
+retrying after a backoff is appropriate.
 
 #### Validation
 

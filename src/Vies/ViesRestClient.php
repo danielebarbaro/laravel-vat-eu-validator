@@ -4,6 +4,7 @@ namespace Danielebarbaro\LaravelVatEuValidator\Vies;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class ViesRestClient implements ViesClientInterface
@@ -131,48 +132,10 @@ class ViesRestClient implements ViesClientInterface
             $response = $this->getClient()
                 ->post("{$this->baseUrl}{$endpoint}", $requestData);
 
-            if ($response->failed()) {
-                $data = $response->json();
-
-                // Handle error response according to CommonResponse schema
-                if (isset($data['actionSucceed']) && $data['actionSucceed'] === false) {
-                    $errorMessage = $this->formatErrorMessage($data);
-
-                    throw new ViesException($errorMessage, $response->status());
-                }
-
-                throw new ViesException(
-                    'VIES REST API request failed: ' . $response->body(),
-                    $response->status()
-                );
-            }
-
-            return $response->json();
+            return $this->parseResponse($response);
         } catch (ConnectionException $e) {
             throw new ViesException($e->getMessage(), $e->getCode());
         }
-    }
-
-    /**
-     * Format error message from CommonResponse
-     *
-     * @param array $data
-     * @return string
-     */
-    private function formatErrorMessage(array $data): string
-    {
-        if (isset($data['errorWrappers']) && is_array($data['errorWrappers'])) {
-            $errors = array_map(function ($wrapper) {
-                $error = $wrapper['error'] ?? 'Unknown error';
-                $message = $wrapper['message'] ?? '';
-
-                return $message ? "{$error}: {$message}" : $error;
-            }, $data['errorWrappers']);
-
-            return 'VIES API errors: ' . implode(', ', $errors);
-        }
-
-        return 'VIES API request failed';
     }
 
     /**
@@ -189,24 +152,107 @@ class ViesRestClient implements ViesClientInterface
             $response = $this->getClient()
                 ->get("{$this->baseUrl}/check-status");
 
-            if ($response->failed()) {
-                $data = $response->json();
-
-                if (isset($data['actionSucceed']) && $data['actionSucceed'] === false) {
-                    $errorMessage = $this->formatErrorMessage($data);
-
-                    throw new ViesException($errorMessage, $response->status());
-                }
-
-                throw new ViesException(
-                    'VIES REST API request failed: ' . $response->body(),
-                    $response->status()
-                );
-            }
-
-            return $response->json();
+            return $this->parseResponse($response);
         } catch (ConnectionException $e) {
             throw new ViesException($e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * Parse a VIES response, throwing on transport-level failures and
+     * on application-level failures (HTTP 200 with actionSucceed=false).
+     *
+     * @return array<string, mixed>
+     * @throws ViesException
+     */
+    private function parseResponse(Response $response): array
+    {
+        $data = $response->json();
+        $isErrorBody = is_array($data) && ($data['actionSucceed'] ?? null) === false;
+
+        if ($response->failed() || $isErrorBody) {
+            throw $this->buildException($response, $data, $isErrorBody);
+        }
+
+        if (! is_array($data)) {
+            throw new ViesException(
+                'Invalid response format from VIES REST API',
+                $response->status()
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * Build a ViesException for a failed response, attaching any error codes
+     * extracted from the CommonResponse.errorWrappers payload.
+     */
+    private function buildException(Response $response, mixed $data, bool $isErrorBody): ViesException
+    {
+        if ($isErrorBody && is_array($data)) {
+            $codes = $this->extractErrorCodes($data);
+
+            $exception = new ViesException(
+                $this->formatErrorMessage($data),
+                $response->status() ?: 0
+            );
+
+            return $exception->setErrorCodes($codes);
+        }
+
+        return new ViesException(
+            'VIES REST API request failed: ' . $response->body(),
+            $response->status()
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return string[]
+     */
+    private function extractErrorCodes(array $data): array
+    {
+        if (! isset($data['errorWrappers']) || ! is_array($data['errorWrappers'])) {
+            return [];
+        }
+
+        $codes = [];
+
+        foreach ($data['errorWrappers'] as $wrapper) {
+            if (is_array($wrapper) && isset($wrapper['error']) && is_string($wrapper['error'])) {
+                $codes[] = $wrapper['error'];
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Format error message from CommonResponse
+     *
+     * @param array $data
+     * @return string
+     */
+    private function formatErrorMessage(array $data): string
+    {
+        if (isset($data['errorWrappers']) && is_array($data['errorWrappers']) && $data['errorWrappers'] !== []) {
+            $errors = array_map(function ($wrapper) {
+                if (! is_array($wrapper)) {
+                    return 'Unknown error';
+                }
+
+                $error = isset($wrapper['error']) && is_string($wrapper['error']) && $wrapper['error'] !== ''
+                    ? $wrapper['error']
+                    : 'Unknown error';
+                $message = isset($wrapper['message']) && is_string($wrapper['message']) ? $wrapper['message'] : '';
+
+                return $message !== '' ? "{$error}: {$message}" : $error;
+            }, $data['errorWrappers']);
+
+            return 'VIES API errors: ' . implode(', ', $errors);
+        }
+
+        return 'VIES API request failed';
     }
 }
