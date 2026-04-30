@@ -251,6 +251,24 @@ class VatValidatorRestFunctionalTest extends TestCase
     }
 
     /**
+     * Test that VatValidator::lookup returns the typed VatLookupResult DTO
+     *
+     * Makes an actual REST API call via VatValidator::lookup and verifies
+     * the response is mapped to the DTO with the trader/identity fields
+     * exposed by the official endpoint.
+     */
+    public function testLookupReturnsFullViesRecord(): void
+    {
+        $result = $this->validator->lookup('IE6388047V');
+
+        $this->assertInstanceOf(\Danielebarbaro\LaravelVatEuValidator\VatLookupResult::class, $result);
+        $this->assertSame('IE', $result->countryCode);
+        $this->assertSame('6388047V', $result->vatNumber);
+        $this->assertIsBool($result->valid);
+        $this->assertNotNull($result->requestDate);
+    }
+
+    /**
      * Test the test service endpoint
      *
      * Verifies that the test endpoint is accessible.

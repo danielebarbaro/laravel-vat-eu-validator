@@ -172,6 +172,31 @@ class VatValidator
     }
 
     /**
+     * Look up the full VIES record for a VAT number.
+     *
+     * Accepts the full VAT number including the country prefix
+     * (e.g. "IE6364992H"). The format is validated locally first;
+     * if it doesn't match the country pattern, a ViesException is
+     * thrown without calling the VIES API.
+     *
+     * @param string $vatNumber Full VAT number incl. country (e.g. "IE6364992H").
+     * @return VatLookupResult
+     * @throws Vies\ViesException When the format is invalid or the VIES call fails.
+     */
+    public function lookup(string $vatNumber): VatLookupResult
+    {
+        $vatNumber = $this->vatCleaner($vatNumber);
+
+        if (! $this->validateFormat($vatNumber)) {
+            throw new Vies\ViesException("Invalid VAT number format: {$vatNumber}");
+        }
+
+        [$country, $number] = $this->splitVat($vatNumber);
+
+        return VatLookupResult::fromArray($this->client->lookup($country, $number));
+    }
+
+    /**
      * @param string $vatNumber
      * @return string
      */

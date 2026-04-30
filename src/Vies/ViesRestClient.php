@@ -83,6 +83,27 @@ class ViesRestClient implements ViesClientInterface
     }
 
     /**
+     * Look up the full VIES record for a VAT number.
+     *
+     * Returns the raw CheckVatResponse payload from the official endpoint,
+     * which contains valid, name, address, trader-* and match fields.
+     *
+     * @param string $countryCode
+     * @param string $vatNumber
+     *
+     * @return array<string, mixed>
+     *
+     * @throws ViesException
+     */
+    public function lookup(string $countryCode, string $vatNumber): array
+    {
+        return $this->checkVatNumber([
+            'countryCode' => $countryCode,
+            'vatNumber' => $vatNumber,
+        ]);
+    }
+
+    /**
      * Test the check VAT service
      *
      * Official endpoint: POST /check-vat-test-service
