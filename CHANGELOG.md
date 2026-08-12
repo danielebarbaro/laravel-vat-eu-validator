@@ -2,6 +2,58 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## VAT lookup DTO and typed VIES error handling - 2026-04-30
+
+### ✨ New Features
+
+- **`VatValidator::lookup()`**: returns a typed `VatLookupResult` DTO with the
+  full VIES record (countryCode, vatNumber, valid, name, address, requestDate,
+  and the REST-only trader / match fields). The VAT format is validated
+  locally first — an invalid format throws a `ViesException` without calling
+  the API.
+- **`ViesClientInterface::lookup()`**: new method on both the SOAP and REST
+  clients returning the raw VIES payload as an array. Implementers of a
+  custom client must add this method.
+
+### 🐛 Bug Fixes
+
+- **REST client now detects application-level errors on HTTP 200**: the VIES
+  REST API can return `200 OK` with a body of
+  `{"actionSucceed": false, "errorWrappers": [{"error": "MS_MAX_CONCURRENT_REQ"}]}`.
+  Previously this slipped through as a successful response; it now throws
+  `ViesException` with the formatted message and error codes attached.
+  Affects both `/check-vat-number` and `/check-status`.
+
+### 🔍 Typed error codes on `ViesException`
+
+- All known VIES API error codes are now constants on `ViesException`:
+  `INVALID_INPUT`, `INVALID_REQUESTER_INFO`, `SERVICE_UNAVAILABLE`,
+  `MS_UNAVAILABLE`, `TIMEOUT`, `VAT_BLOCKED`, `IP_BLOCKED`,
+  `GLOBAL_MAX_CONCURRENT_REQ`, `GLOBAL_MAX_CONCURRENT_REQ_TIME`,
+  `MS_MAX_CONCURRENT_REQ`, `MS_MAX_CONCURRENT_REQ_TIME`.
+- New helpers: `getErrorCodes()`, `hasErrorCode(string)`, `isTransient()` —
+  letting callers retry on rate-limit / service-unavailable and fail fast on
+  permanent errors.
+
+```php
+try {
+    $result = VatValidator::lookup('IT00743110157');
+} catch (ViesException $e) {
+    if ($e->isTransient()) {
+        // Retry with backoff
+    }
+}
+```
+
+### 🧪 Testing
+
+- New unit tests in `tests/Vies/ViesRestClientTest.php` covering the
+  HTTP-200-with-`actionSucceed=false` path, multiple error wrappers, the
+  status endpoint, non-JSON bodies, and HTTP error responses without a VIES
+  error body.
+- New unit tests in `tests/VatLookupResultTest.php` covering the DTO mapping
+  for both REST and SOAP response shapes.
+
 ## Laravel 13 support - 2026-03-28
 
 Thanks to @sergix44 , we now have compatibility with Laravel 13! 🚀
