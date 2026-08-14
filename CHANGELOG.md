@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## French translations and CI fixes - 2026-08-12
+
+### ✨ New
+
+* French translations, contributed by @bestmomo. Thank you! 🇫🇷
+
+### 🔧 Maintenance
+
+* Laravel 10 and 11 removed from the CI matrix. Composer 2.9 blocks packages affected by security advisories by default, and advisory `PKSA-mdq4-51ck-6kdq` covers every released Laravel 10 and 11 version. Both branches are EOL, so a patched release will never exist.
+* `orchestra/testbench` and `phpunit/phpunit` dev constraints raised to versions that resolve cleanly.
+* Bumped `actions/checkout` to v7.
+
+The `require` constraints are unchanged, so nothing changes for existing users.
+
 ## Laravel 13 support - 2026-03-28
 
 Thanks to @sergix44 , we now have compatibility with Laravel 13! 🚀
@@ -124,6 +138,7 @@ use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
 $validator = new VatValidator(new ViesRestClient());
 
 
+
 ```
 ##### If you want to switch to the REST client
 
@@ -132,6 +147,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 ```php
 'client' => ViesRestClient::CLIENT_NAME,
+
 
 
 ```

@@ -9,6 +9,8 @@ laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com
 
 #### For Laravel 10, 11, 12, 13 use tag 3.x
 
+> **Note on Laravel 10 and 11.** Both branches are end of life and every released version is flagged by a Composer security advisory, so Composer 2.9 and later refuse to install them by default. The package constraints still allow them, but CI only covers Laravel 12 and 13. If you are still on Laravel 10 or 11, plan an upgrade.
+
 #### For Laravel 10, 11, 12 use tag 2.x (legacy SOAP-only)
 
 #### For Laravel 8, 9 use tag 1.20
