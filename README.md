@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/danielebarbaro/laravel-vat-eu-validator/main/art/banner.png" alt="Laravel VAT EU Validator">
+</p>
+
 # Laravel VAT EU VALIDATOR
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
