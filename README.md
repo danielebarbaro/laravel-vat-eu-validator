@@ -4,10 +4,13 @@
 
 # Laravel VAT EU VALIDATOR
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/danielebarbaro/laravel-vat-eu-validator/run-tests.yml?branch=main&label=tests)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/danielebarbaro/laravel-vat-eu-validator/php-cs-fixer.yml?branch=main&label=code%20style)](https://github.com/danielebarbaro/laravel-vat-eu-validator/actions?query=workflow%3A%22Check+%26+fix+styling%22+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square)](https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator)
+<p align="center">
+    <a href="https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator"><img src="https://img.shields.io/packagist/v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square" alt="Packagist"></a>
+    <a href="https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator"><img src="https://img.shields.io/packagist/php-v/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square" alt="PHP from Packagist"></a>
+    <a href="https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator"><img src="https://badge.laravel.cloud/badge/danielebarbaro/laravel-vat-eu-validator?style=flat" alt="Laravel versions"></a>
+    <a href="https://github.com/danielebarbaro/laravel-vat-eu-validator/actions"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/danielebarbaro/laravel-vat-eu-validator/run-tests.yml?branch=main&label=Tests&style=flat-square"></a>
+    <a href="https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator"><img src="https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square" alt="Total Downloads"></a>
+</p>
 
 laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
