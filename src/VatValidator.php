@@ -77,7 +77,7 @@ class VatValidator
             return false;
         }
 
-        $validate_rule = preg_match('/^' . self::$pattern_expression[$country] . '$/', (string) $number) > 0;
+        $validate_rule = preg_match('/^(?:' . self::$pattern_expression[$country] . ')$/', (string) $number) > 0;
 
         if ($validate_rule && $country === 'IT') {
             $result = self::luhnCheck($number);
