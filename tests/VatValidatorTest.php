@@ -39,6 +39,18 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($vat_number));
     }
 
+    #[DataProvider('validXiVatFormatsProvider')]
+    public function testXiVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidXiVatFormatsProvider')]
+    public function testXiVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
     /**
      * Numbers whose alternation branches used to match unanchored.
      *
@@ -50,6 +62,30 @@ class VatValidatorTest extends TestCase
             'ES leakage test' => ['ESXX12345678AYY'],
             'IE leakage test' => ['IEXX1234567WAYY'],
             'GB leakage test' => ['GBXX123456789012YY'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validXiVatFormatsProvider(): array
+    {
+        return [
+            'XI valid standard 9 digits' => ['XI123456789'],
+            'XI valid 12 digits' => ['XI123456789012'],
+            'XI valid special prefix GD' => ['XIGD123'],
+            'XI valid special prefix HA' => ['XIHA123'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidXiVatFormatsProvider(): array
+    {
+        return [
+            'XI invalid length' => ['XI12345678'],
+            'XI invalid characters' => ['XIA12345678'],
         ];
     }
 
