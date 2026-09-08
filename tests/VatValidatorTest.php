@@ -5,6 +5,7 @@ namespace Danielebarbaro\LaravelVatEuValidator\Tests;
 use Danielebarbaro\LaravelVatEuValidator\VatValidator;
 use Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider;
 use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class VatValidatorTest extends TestCase
 {
@@ -32,13 +33,23 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($this->fake_vat));
     }
 
+    #[DataProvider('invalidVatFormatsProvider')]
+    public function testVatFormatAlternationLeakage(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
+    /**
+     * Numbers whose alternation branches used to match unanchored.
+     *
+     * @return array<string, array<string>>
+     */
     public static function invalidVatFormatsProvider(): array
     {
         return [
-        // Non-isolated alternation trap (Regex bug that leaks)
-        'ES leakage test' => ['ESXX12345678AYY'],
-        'IE leakage test' => ['IEXX1234567WAYY'],
-        'GB leakage test' => ['GBXX123456789YY'],
+            'ES leakage test' => ['ESXX12345678AYY'],
+            'IE leakage test' => ['IEXX1234567WAYY'],
+            'GB leakage test' => ['GBXX123456789012YY'],
         ];
     }
 
