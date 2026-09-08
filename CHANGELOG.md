@@ -2,6 +2,19 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Regex anchoring fix - 2026-09-08
+
+### 🐛 Fixes
+
+* Country patterns are now wrapped in a non-capturing group inside `validateFormat()`. Patterns with top level alternation (CH, ES, GB, IE) were anchoring only their first branch, so strings such as `ESXX12345678AYY` or `IEXX1234567WAYY` passed validation. Reported and fixed by @bestmomo. Thank you! 🙏
+
+### 🔧 Maintenance
+
+* Regression tests covering the ES, IE and GB leakage cases.
+* README: package banner, and Packagist and CI badges unified.
+
+VAT numbers that were accepted only because of this bug are now correctly rejected. If you cache validation results, consider invalidating them.
+
 ## French translations and CI fixes - 2026-08-12
 
 ### ✨ New
