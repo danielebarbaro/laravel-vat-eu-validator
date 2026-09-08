@@ -32,6 +32,16 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($this->fake_vat));
     }
 
+    public static function invalidVatFormatsProvider(): array
+    {
+        return [
+        // Non-isolated alternation trap (Regex bug that leaks)
+        'ES leakage test' => ['ESXX12345678AYY'],
+        'IE leakage test' => ['IEXX1234567WAYY'],
+        'GB leakage test' => ['GBXX123456789YY'],
+        ];
+    }
+
     public function testVatValidFormat(): void
     {
         self::assertTrue($this->validator->validateFormat('IT10648200011'));
