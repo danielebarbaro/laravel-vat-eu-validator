@@ -75,6 +75,8 @@ class VatValidatorTest extends TestCase
             'XI valid 12 digits' => ['XI123456789012'],
             'XI valid special prefix GD' => ['XIGD123'],
             'XI valid special prefix HA' => ['XIHA123'],
+            'XI valid lowercase' => ['xi123456789'],
+            'XI valid with surrounding spaces' => [' XI123456789 '],
         ];
     }
 
@@ -84,8 +86,14 @@ class VatValidatorTest extends TestCase
     public static function invalidXiVatFormatsProvider(): array
     {
         return [
-            'XI invalid length' => ['XI12345678'],
+            'XI invalid 8 digits' => ['XI12345678'],
+            'XI invalid 10 digits' => ['XI1234567890'],
+            'XI invalid 13 digits' => ['XI1234567890123'],
             'XI invalid characters' => ['XIA12345678'],
+            'XI invalid GD too short' => ['XIGD12'],
+            'XI invalid HA too long' => ['XIHA1234'],
+            'XI invalid unknown prefix' => ['XIZZ123'],
+            'XI leakage test' => ['XIXX123456789012YY'],
         ];
     }
 
