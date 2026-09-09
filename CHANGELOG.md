@@ -2,6 +2,23 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## French VAT key validation - 2026-09-09
+
+### ✨ New
+
+* Checksum validation for French (`FR`) VAT numbers. The two digit numeric key is verified against the official Modulo 97 algorithm, `(12 + 3 * (SIREN % 97)) % 97`. Contributed by @bestmomo. Thank you! 🙏
+* The `FR` pattern now excludes the ambiguous letters `I` and `O`, and accepts mixed keys such as `2A` that the previous pattern rejected. Both follow the VIES specification.
+
+### 🔧 Maintenance
+
+* Alphanumeric `FR` keys carry no checksum, so they keep relying on the format pattern alone.
+* Test coverage for the official checksum example, numeric keys with a leading zero, SIREN values with leading zeros, alphanumeric keys, invalid checksums, forbidden letters in both key positions, and wrong SIREN lengths.
+* Replaced the `FR12345678901` fixture in the functional existence tests. Its key fails Modulo 97, so the fixture never reached VIES.
+
+`FR` numbers whose numeric key fails Modulo 97, or whose key contains `I` or `O`, were accepted before and are rejected now. They were never valid under the VIES specification. If you cache validation results, consider invalidating the `FR` ones.
+
+**Full Changelog**: https://github.com/danielebarbaro/laravel-vat-eu-validator/compare/v3.3.0...v3.4.0
+
 ## Northern Ireland support - 2026-09-09
 
 ### ✨ New
@@ -167,6 +184,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 
 
+
 ```
 ##### If you want to switch to the REST client
 
@@ -175,6 +193,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 ```php
 'client' => ViesRestClient::CLIENT_NAME,
+
 
 
 
