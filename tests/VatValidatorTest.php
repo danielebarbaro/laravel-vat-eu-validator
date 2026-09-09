@@ -51,6 +51,18 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($vat_number));
     }
 
+    #[DataProvider('validFrVatFormatsProvider')]
+    public function testFrVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidFrVatFormatsProvider')]
+    public function testFrVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
     /**
      * Numbers whose alternation branches used to match unanchored.
      *
@@ -94,6 +106,32 @@ class VatValidatorTest extends TestCase
             'XI invalid HA too long' => ['XIHA1234'],
             'XI invalid unknown prefix' => ['XIZZ123'],
             'XI leakage test' => ['XIXX123456789012YY'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validFrVatFormatsProvider(): array
+    {
+        return [
+            'FR valid numeric key (Modulo 97)' => ['FR40303265045'], 
+            'FR valid SIREN with leading zeros' => ['FR34000123456'],
+            'FR valid alphabetic key without forbidden chars' => ['FRHU356000000'],
+            'FR valid alphanumeric key' => ['FR2A356000000'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidFrVatFormatsProvider(): array
+    {
+        return [
+            'FR invalid modulo 97 key' => ['FR41303265045'],
+            'FR forbidden letter O in key' => ['FRO0303265045'],
+            'FR forbidden letter I in key' => ['FRI0303265045'],
+            'FR invalid SIREN length' => ['FR4030326504'],
         ];
     }
 
