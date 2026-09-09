@@ -63,6 +63,18 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($vat_number));
     }
 
+    #[DataProvider('validChVatFormatsProvider')]
+    public function testChVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidChVatFormatsProvider')]
+    public function testChVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
     /**
      * Numbers whose alternation branches used to match unanchored.
      *
@@ -137,6 +149,41 @@ class VatValidatorTest extends TestCase
             'FR forbidden letter I in second key char' => ['FR1I303265045'],
             'FR SIREN too short' => ['FR4030326504'],
             'FR SIREN too long' => ['FR403032650456'],
+        ];
+    }
+
+    public static function validChVatFormatsProvider(): array
+    {
+        return [
+            'CH valid 6 digits' => ['CH123456'],
+            'CH valid E + 9 digits' => ['CHE123456789'],
+            'CH valid E + 9 digits + TVA' => ['CHE123456789TVA'],
+            'CH valid E + 9 digits + MWST' => ['CHE123456789MWST'],
+            'CH valid E + 9 digits + IVA' => ['CHE123456789IVA'],
+            'CH valid E + 9 digits + space + TVA' => ['CHE123456789 TVA'],
+            'CH valid E + 9 digits + space + MWST' => ['CHE123456789 MWST'],
+            'CH valid E + 9 digits + space + IVA' => ['CHE123456789 IVA'],
+            'CH valid lowercase 6 digits' => ['ch123456'],
+            'CH valid lowercase E + 9 digits' => ['che123456789'],
+            'CH valid E + 9 digits + lowercase suffix' => ['CHE123456789tva'],
+        ];
+    }
+
+    public static function invalidChVatFormatsProvider(): array
+    {
+        return [
+            'CH invalid 5 digits' => ['CH12345'],
+            'CH invalid 7 digits' => ['CH1234567'],
+            'CH invalid E + 8 digits' => ['CHE12345678'],
+            'CH invalid E + 10 digits' => ['CHE1234567890'],
+            'CH invalid suffix' => ['CHE123456789XYZ'],
+            'CH invalid partial suffix' => ['CHE123456789TV'],
+            'CH invalid first letter' => ['CHA123456'],
+            'CH invalid E + 9 digits + invalid suffix' => ['CHE123456789ABC'],
+            'CH invalid E + 9 digits + space + invalid suffix' => ['CHE123456789 ABC'],
+            'CH invalid double suffix' => ['CHE123456789TVAMWST'],
+            'CH invalid special chars' => ['CH12-34-56'],
+            'CH invalid missing E' => ['CH123456789TVA'],
         ];
     }
 
