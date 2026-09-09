@@ -2,31 +2,16 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
-## Support for Northern Ireland (`XI`)
-
-### ✨ New
-
-Adds support for Northern Ireland (`XI`) VAT numbers post-Brexit, while keeping the existing `GB` prefix for backwards compatibility.
-
-- Added `XI` regex pattern matching.
-- Added test coverage for `XI` VAT numbers.
-- Updated `CHANGELOG.md`.
-
-### 🧪 Testing
-
-- [x] Ran `composer test` — all tests pass successfully.
-- [x] Ran `composer lint`.
-
 ## Regex anchoring fix - 2026-09-08
 
 ### 🐛 Fixes
 
-- Country patterns are now wrapped in a non-capturing group inside `validateFormat()`. Patterns with top level alternation (CH, ES, GB, IE) were anchoring only their first branch, so strings such as `ESXX12345678AYY` or `IEXX1234567WAYY` passed validation. Reported and fixed by @bestmomo. Thank you! 🙏
+* Country patterns are now wrapped in a non-capturing group inside `validateFormat()`. Patterns with top level alternation (CH, ES, GB, IE) were anchoring only their first branch, so strings such as `ESXX12345678AYY` or `IEXX1234567WAYY` passed validation. Reported and fixed by @bestmomo. Thank you! 🙏
 
 ### 🔧 Maintenance
 
-- Regression tests covering the ES, IE and GB leakage cases.
-- README: package banner, and Packagist and CI badges unified.
+* Regression tests covering the ES, IE and GB leakage cases.
+* README: package banner, and Packagist and CI badges unified.
 
 VAT numbers that were accepted only because of this bug are now correctly rejected. If you cache validation results, consider invalidating them.
 
@@ -34,13 +19,13 @@ VAT numbers that were accepted only because of this bug are now correctly reject
 
 ### ✨ New
 
-- French translations, contributed by @bestmomo. Thank you! 🇫🇷
+* French translations, contributed by @bestmomo. Thank you! 🇫🇷
 
 ### 🔧 Maintenance
 
-- Laravel 10 and 11 removed from the CI matrix. Composer 2.9 blocks packages affected by security advisories by default, and advisory `PKSA-mdq4-51ck-6kdq` covers every released Laravel 10 and 11 version. Both branches are EOL, so a patched release will never exist.
-- `orchestra/testbench` and `phpunit/phpunit` dev constraints raised to versions that resolve cleanly.
-- Bumped `actions/checkout` to v7.
+* Laravel 10 and 11 removed from the CI matrix. Composer 2.9 blocks packages affected by security advisories by default, and advisory `PKSA-mdq4-51ck-6kdq` covers every released Laravel 10 and 11 version. Both branches are EOL, so a patched release will never exist.
+* `orchestra/testbench` and `phpunit/phpunit` dev constraints raised to versions that resolve cleanly.
+* Bumped `actions/checkout` to v7.
 
 The `require` constraints are unchanged, so nothing changes for existing users.
 
@@ -63,57 +48,66 @@ Thanks to @sergix44 , we now have compatibility with Laravel 13! 🚀
 ##### Updated Service Provider
 
 - `VatValidatorServiceProvider` has been refactored to:
-    - Register the `ViesClientInterface` binding based on configuration
-    - Automatically resolve the correct client (SOAP or REST) from the container
-    - Publish the new `vat-validator.php` configuration file
+  - Register the `ViesClientInterface` binding based on configuration
+  - Automatically resolve the correct client (SOAP or REST) from the container
+  - Publish the new `vat-validator.php` configuration file
+  
 
 #### ✨ New Features
 
 ##### REST Client for VIES API
 
 - **New `ViesRestClient`**: HTTP client using the official European Commission VIES REST API (`https://ec.europa.eu/taxation_customs/vies/rest-api`).
-    - No authentication or API key required
-    - Does not require the `ext-soap` extension (uses native HTTP)
-    - Configurable timeout
-    - Configurable base URL (useful for testing/mocking)
-    - `ViesRestClient::BASE_URL` constant for the official endpoint
-    - `ViesRestClient::CLIENT_NAME` constant for client identification
+  - No authentication or API key required
+  - Does not require the `ext-soap` extension (uses native HTTP)
+  - Configurable timeout
+  - Configurable base URL (useful for testing/mocking)
+  - `ViesRestClient::BASE_URL` constant for the official endpoint
+  - `ViesRestClient::CLIENT_NAME` constant for client identification
+  
 
 ##### SOAP Client renamed and refactored
 
 - **`Vies\Client` → `Vies\ViesSoapClient`**: the original SOAP client has been renamed and now implements `ViesClientInterface`.
-    - `ViesSoapClient::CLIENT_NAME` constant for client identification
-    - Configurable timeout via config
+  - `ViesSoapClient::CLIENT_NAME` constant for client identification
+  - Configurable timeout via config
+  
 
 ##### Publishable configuration file
 
 - **New `config/vat-validator.php`**: allows choosing which client to use and configuring its parameters.
-    - `'client'` → selects the active client (`ViesSoapClient::CLIENT_NAME` or `ViesRestClient::CLIENT_NAME`)
-    - `'clients'` → per-client configuration (timeout, base_url)
-    - Publishable with: `php artisan vendor:publish --tag=laravel-vat-eu-validator-config`
+  - `'client'` → selects the active client (`ViesSoapClient::CLIENT_NAME` or `ViesRestClient::CLIENT_NAME`)
+  - `'clients'` → per-client configuration (timeout, base_url)
+  - Publishable with: `php artisan vendor:publish --tag=laravel-vat-eu-validator-config`
+  
 
 #### 🧪 Testing
 
 ##### Complete test suite restructuring
 
 - **Test suite separation**: tests are now split into `unit` and `functional`:
-    - `tests/` (unit) — mocked tests, run in CI
-    - `tests/Functional/` — tests making actual API calls to VIES
-
+  
+  - `tests/` (unit) — mocked tests, run in CI
+  - `tests/Functional/` — tests making actual API calls to VIES
+  
 - **New test files**:
-    - `tests/Functional/VatValidatorRestFunctionalTest.php` — functional tests for the REST client
-    - `tests/Functional/VatValidatorSoapFunctionalTest.php` — functional tests for the SOAP client
-    - `tests/Rules/VatNumberExistTest.php` — tests for the VatNumberExist rule
-    - `tests/Rules/VatNumberFormatTest.php` — tests for the VatNumberFormat rule
-    - `tests/Rules/VatNumberTest.php` — tests for the VatNumber rule
-    - `tests/VatValidatorFacadeTest.php` — tests for the facade
-    - `tests/VatValidatorTest.php` — refactored VatValidator tests
-    - `tests/Vies/ViesTest.php` — tests for the VIES clients
-
+  
+  - `tests/Functional/VatValidatorRestFunctionalTest.php` — functional tests for the REST client
+  - `tests/Functional/VatValidatorSoapFunctionalTest.php` — functional tests for the SOAP client
+  - `tests/Rules/VatNumberExistTest.php` — tests for the VatNumberExist rule
+  - `tests/Rules/VatNumberFormatTest.php` — tests for the VatNumberFormat rule
+  - `tests/Rules/VatNumberTest.php` — tests for the VatNumber rule
+  - `tests/VatValidatorFacadeTest.php` — tests for the facade
+  - `tests/VatValidatorTest.php` — refactored VatValidator tests
+  - `tests/Vies/ViesTest.php` — tests for the VIES clients
+  
 - **New test documentation**: `tests/README.md` with a complete testing guide
+  
 - **Updated Composer scripts**:
-    - `composer test` → runs only the `unit` test suite
-    - `composer test-functional` → runs only the `functional` test suite
+  
+  - `composer test` → runs only the `unit` test suite
+  - `composer test-functional` → runs only the `functional` test suite
+  
 
 ##### PHPUnit updated
 
@@ -159,7 +153,6 @@ $validator = new VatValidator(new ViesRestClient());
 
 
 ```
-
 ##### If you want to switch to the REST client
 
 1. Publish the configuration: `php artisan vendor:publish --tag=laravel-vat-eu-validator-config`
@@ -171,7 +164,6 @@ $validator = new VatValidator(new ViesRestClient());
 
 
 ```
-
 ##### If your tests reference `Vies\Client`
 
 Update references to `ViesSoapClient` or use `ViesClientInterface` for mocking.
