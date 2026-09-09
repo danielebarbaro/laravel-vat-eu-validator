@@ -80,10 +80,6 @@ class VatValidator
 
         $validate_rule = preg_match('/^(?:' . self::$pattern_expression[$country] . ')$/', (string) $number) > 0;
 
-        if ($validate_rule && $country === 'FR') {
-            return $this->validateFrVat($number);
-        }
-
         if ($validate_rule && $country === 'IT') {
             $result = self::luhnCheck($number);
 
@@ -92,6 +88,10 @@ class VatValidator
 
         if ($validate_rule && $country === 'HU') {
             return $this->validateHuVat($number);
+        }
+
+        if ($validate_rule && $country === 'FR') {
+            return $this->validateFrVat($number);
         }
 
         return $validate_rule;
@@ -165,29 +165,25 @@ class VatValidator
     }
 
     /**
-     * Validates a French VAT number (Modulo 97 for numeric keys, strict character set for alpha keys).
+     * Validates a French VAT number.
      *
-     * @param string $vatNumber 11-character FR VAT body (2-char key + 9-digit SIREN)
+     * Only numeric keys carry a checksum; alphanumeric ones are already
+     * constrained by the format pattern.
+     *
+     * @param string $vatNumber
      * @return bool
      */
     private function validateFrVat(string $vatNumber): bool
     {
-        if (strlen($vatNumber) !== 11) {
-            return false;
+        $key = substr($vatNumber, 0, 2);
+
+        if (! ctype_digit($key)) {
+            return true;
         }
 
-        $key = strtoupper(substr($vatNumber, 0, 2));
-        $siren = substr($vatNumber, 2, 9);
+        $siren = (int) substr($vatNumber, 2, 9);
 
-        // Validation with Modulo 97
-        if (ctype_digit($key)) {
-            $expectedKey = (12 + 3 * ((int) $siren % 97)) % 97;
-
-            return (int) $key === $expectedKey;
-        }
-
-        // Validation with strict character set for alpha keys
-        return preg_match('/^[0-9A-HJ-NP-Z]{2}$/', $key) === 1;
+        return (int) $key === (12 + 3 * ($siren % 97)) % 97;
     }
 
     /**
