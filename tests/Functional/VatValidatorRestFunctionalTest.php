@@ -291,7 +291,7 @@ class VatValidatorRestFunctionalTest extends TestCase
     {
         return [
             'Germany' => ['DE123456789'],
-            'France' => ['FR12345678901'],
+            'France' => ['FR83404833048'],
             'Spain' => ['ESA12345674'],
             'Netherlands' => ['NL123456789B01'],
             'Belgium' => ['BE0123456789'],
