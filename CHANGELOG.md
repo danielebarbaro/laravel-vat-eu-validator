@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Northern Ireland support - 2026-09-09
+
+### ✨ New
+
+* Support for Northern Ireland (`XI`) VAT numbers. Post Brexit, VIES no longer answers for `GB`, while `XI` covers Northern Ireland businesses trading in goods under the Protocol. Contributed by @bestmomo. Thank you! 🙏
+* The `XI` pattern matches the same formats as `GB`: 9 digits, 12 digits for branch traders, and the `GD` and `HA` prefixes followed by 3 digits.
+
+### 🔧 Maintenance
+
+* `GB` is left untouched, so nothing changes for existing users. Applications validating Northern Irish numbers should switch the prefix from `GB` to `XI`, since only `XI` is resolvable through VIES.
+* Test coverage for `XI` covering valid formats, casing and whitespace handling, malformed lengths, unknown prefixes, and an anchoring regression case.
+
+**Full Changelog**: https://github.com/danielebarbaro/laravel-vat-eu-validator/compare/v3.2.1...v3.3.0
+
 ## Regex anchoring fix - 2026-09-08
 
 ### 🐛 Fixes
@@ -152,6 +166,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 
 
+
 ```
 ##### If you want to switch to the REST client
 
@@ -160,6 +175,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 ```php
 'client' => ViesRestClient::CLIENT_NAME,
+
 
 
 
