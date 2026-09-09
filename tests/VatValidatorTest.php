@@ -115,7 +115,9 @@ class VatValidatorTest extends TestCase
     public static function validFrVatFormatsProvider(): array
     {
         return [
-            'FR valid numeric key (Modulo 97)' => ['FR40303265045'], 
+            'FR valid numeric key (Modulo 97)' => ['FR40303265045'],
+            'FR valid numeric key from the official example' => ['FR83404833048'],
+            'FR valid numeric key with a leading zero' => ['FR00100000012'],
             'FR valid SIREN with leading zeros' => ['FR34000123456'],
             'FR valid alphabetic key without forbidden chars' => ['FRHU356000000'],
             'FR valid alphanumeric key' => ['FR2A356000000'],
@@ -129,9 +131,12 @@ class VatValidatorTest extends TestCase
     {
         return [
             'FR invalid modulo 97 key' => ['FR41303265045'],
-            'FR forbidden letter O in key' => ['FRO0303265045'],
-            'FR forbidden letter I in key' => ['FRI0303265045'],
-            'FR invalid SIREN length' => ['FR4030326504'],
+            'FR forbidden letter O in first key char' => ['FRO0303265045'],
+            'FR forbidden letter I in first key char' => ['FRI0303265045'],
+            'FR forbidden letter O in second key char' => ['FR1O303265045'],
+            'FR forbidden letter I in second key char' => ['FR1I303265045'],
+            'FR SIREN too short' => ['FR4030326504'],
+            'FR SIREN too long' => ['FR403032650456'],
         ];
     }
 
