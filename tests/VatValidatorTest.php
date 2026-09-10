@@ -166,6 +166,12 @@ class VatValidatorTest extends TestCase
             'CH valid lowercase 6 digits' => ['ch123456'],
             'CH valid lowercase E + 9 digits' => ['che123456789'],
             'CH valid E + 9 digits + lowercase suffix' => ['CHE123456789tva'],
+            'CH valid with internal space (1)' => ['CH E123456789'],
+            'CH valid with internal space (2)' => ['CH E123456789 TVA'],
+            'CH valid with multiple internal spaces' => ['CH   E123456789   TVA'],
+            'CH valid lowercase E + 9 digits + suffix' => ['che123456789tva'],
+            'CH valid with surrounding spaces' => [' CH 123456 '],
+            'CH valid with surrounding spaces + suffix' => [' CH E123456789 IVA '],
         ];
     }
 
@@ -184,6 +190,11 @@ class VatValidatorTest extends TestCase
             'CH invalid double suffix' => ['CHE123456789TVAMWST'],
             'CH invalid special chars' => ['CH12-34-56'],
             'CH invalid missing E' => ['CH123456789TVA'],
+            'CH invalid E + 9 digits + too long suffix' => ['CHE123456789TVA123'],
+            'CH invalid E + 9 digits + incomplete suffix' => ['CHE123456789T'],
+            'CH invalid country code' => ['XX123456'],
+            'CH invalid too short' => ['CH'],
+            'CH invalid E only' => ['CHE'],
         ];
     }
 
