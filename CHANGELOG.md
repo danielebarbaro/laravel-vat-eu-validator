@@ -2,6 +2,21 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Swiss VAT format fix - 2026-09-10
+
+### 🐛 Fixes
+
+* `CHE` numbers without a `TVA`, `MWST` or `IVA` suffix are now accepted. The `CH` pattern required one of the three suffixes, so a bare UID such as `CHE123456789` was rejected even though the suffix only marks VAT registration. Contributed by @bestmomo. Thank you! 🙏
+
+### 🔧 Maintenance
+
+* The redundant inner `^` and `$` anchors were dropped from the `CH` pattern. Since v3.2.1 `validateFormat()` wraps every pattern in `^(?:...)$`, so they no longer had any effect.
+* Test coverage for `CH` covering 6 digit numbers, bare `CHE` UIDs, the three suffixes with and without a separating space, lowercase input, and malformed lengths, prefixes and suffixes.
+
+`CHE` numbers without a suffix were rejected before and are accepted now. If you cache validation results, consider invalidating the `CH` ones.
+
+**Full Changelog**: https://github.com/danielebarbaro/laravel-vat-eu-validator/compare/v3.4.0...v3.4.1
+
 ## French VAT key validation - 2026-09-09
 
 ### ✨ New
