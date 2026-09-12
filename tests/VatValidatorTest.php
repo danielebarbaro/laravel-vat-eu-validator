@@ -75,6 +75,18 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($vat_number));
     }
 
+    #[DataProvider('validIeVatFormatsProvider')]
+    public function testIeVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidIeVatFormatsProvider')]
+    public function testIeVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
     /**
      * Numbers whose alternation branches used to match unanchored.
      *
@@ -149,6 +161,40 @@ class VatValidatorTest extends TestCase
             'FR forbidden letter I in second key char' => ['FR1I303265045'],
             'FR SIREN too short' => ['FR4030326504'],
             'FR SIREN too long' => ['FR403032650456'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validIeVatFormatsProvider(): array
+    {
+        return [
+            'IE valid current style' => ['IE6388047V'],
+            'IE valid current style with a second letter' => ['IE1234567FA'],
+            'IE valid current style with W as second letter' => ['IE1234567FW'],
+            'IE valid old style with a letter' => ['IE1A23456A'],
+            'IE valid old style with a plus sign' => ['IE1+23456A'],
+            'IE valid old style with an asterisk' => ['IE1*23456A'],
+            'IE valid lowercase' => ['ie6388047v'],
+            'IE valid with surrounding spaces' => [' IE6388047V '],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidIeVatFormatsProvider(): array
+    {
+        return [
+            'IE invalid all digits' => ['IE12345678'],
+            'IE invalid all letters' => ['IEABCDEFGH'],
+            'IE invalid missing check letter' => ['IE1234567'],
+            'IE invalid check letter out of range' => ['IE1234567X'],
+            'IE invalid second letter out of range' => ['IE1234567FZ'],
+            'IE invalid old style too short' => ['IE1A2345A'],
+            'IE invalid old style check letter out of range' => ['IE1A23456X'],
+            'IE invalid too long' => ['IE1234567FAB'],
         ];
     }
 
