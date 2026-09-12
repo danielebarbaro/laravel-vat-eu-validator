@@ -75,6 +75,42 @@ class VatValidatorTest extends TestCase
         self::assertFalse($this->validator->validateFormat($vat_number));
     }
 
+    #[DataProvider('validBeVatFormatsProvider')]
+    public function testBeVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidBeVatFormatsProvider')]
+    public function testBeVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('validAtVatFormatsProvider')]
+    public function testAtVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidAtVatFormatsProvider')]
+    public function testAtVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('validSiVatFormatsProvider')]
+    public function testSiVatValidFormat(string $vat_number): void
+    {
+        self::assertTrue($this->validator->validateFormat($vat_number));
+    }
+
+    #[DataProvider('invalidSiVatFormatsProvider')]
+    public function testSiVatInvalidFormat(string $vat_number): void
+    {
+        self::assertFalse($this->validator->validateFormat($vat_number));
+    }
+
     /**
      * Numbers whose alternation branches used to match unanchored.
      *
@@ -149,6 +185,84 @@ class VatValidatorTest extends TestCase
             'FR forbidden letter I in second key char' => ['FR1I303265045'],
             'FR SIREN too short' => ['FR4030326504'],
             'FR SIREN too long' => ['FR403032650456'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validBeVatFormatsProvider(): array
+    {
+        return [
+            'BE valid starting with 0' => ['BE0123456789'],
+            'BE valid starting with 1' => ['BE1123456789'],
+            'BE valid lowercase' => ['be0123456789'],
+            'BE valid with surrounding spaces' => [' BE0123456789 '],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidBeVatFormatsProvider(): array
+    {
+        return [
+            'BE invalid starting with 2' => ['BE2123456789'],
+            'BE invalid starting with 9' => ['BE9123456789'],
+            'BE invalid 9 digits' => ['BE012345678'],
+            'BE invalid 11 digits' => ['BE01234567890'],
+            'BE invalid letters' => ['BE012345678A'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validAtVatFormatsProvider(): array
+    {
+        return [
+            'AT valid U + 8 digits' => ['ATU12345678'],
+            'AT valid lowercase' => ['atu12345678'],
+            'AT valid with surrounding spaces' => [' ATU12345678 '],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidAtVatFormatsProvider(): array
+    {
+        return [
+            'AT invalid letters after U' => ['ATU1234567A'],
+            'AT invalid missing U' => ['AT123456789'],
+            'AT invalid 7 digits' => ['ATU1234567'],
+            'AT invalid 9 digits' => ['ATU123456789'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validSiVatFormatsProvider(): array
+    {
+        return [
+            'SI valid 8 digits' => ['SI12345678'],
+            'SI valid starting with 9' => ['SI98765432'],
+            'SI valid lowercase' => ['si12345678'],
+            'SI valid with surrounding spaces' => [' SI12345678 '],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function invalidSiVatFormatsProvider(): array
+    {
+        return [
+            'SI invalid leading zero' => ['SI01234567'],
+            'SI invalid 7 digits' => ['SI1234567'],
+            'SI invalid 9 digits' => ['SI123456789'],
+            'SI invalid letters' => ['SI1234567A'],
         ];
     }
 
