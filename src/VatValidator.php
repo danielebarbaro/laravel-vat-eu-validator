@@ -13,8 +13,8 @@ class VatValidator
      * @link http://ec.europa.eu/taxation_customs/vies/faq.html?locale=en#item_11
      */
     protected static array $pattern_expression = [
-        'AT' => 'U[A-Z\d]{8}',
-        'BE' => '(0\d{9}|\d{10})',
+        'AT' => 'U\d{8}',
+        'BE' => '[01]\d{9}',
         'BG' => '\d{9,10}',
         'CH' => '\d{6}|E\d{9}(\s?(TVA|MWST|IVA))?',
         'CY' => '\d{8}[A-Z]',
@@ -40,7 +40,7 @@ class VatValidator
         'PT' => '\d{9}',
         'RO' => '\d{2,10}',
         'SE' => '\d{12}',
-        'SI' => '\d{8}',
+        'SI' => '[1-9]\d{7}',
         'SK' => '\d{10}',
         'XI' => '\d{9}|\d{12}|(GD|HA)\d{3}',
     ];
