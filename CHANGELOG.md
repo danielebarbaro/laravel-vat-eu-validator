@@ -2,6 +2,22 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Stricter BE, AT and SI patterns - 2026-09-13
+
+### 🐛 Fixes
+
+* The `BE` pattern was `(0\d{9}|\d{10})`. The first branch is a subset of the second, so the pattern was equivalent to `\d{10}` and accepted any ten digits. Belgian enterprise numbers always start with `0` or `1`, so the pattern is now `[01]\d{9}`. Reported by @bestmomo. Thank you! 🙏
+* The `AT` pattern accepted letters after the `U`. Austrian numbers carry eight digits, so `ATU1234567A` is no longer accepted.
+* The `SI` pattern accepted a leading zero. The first digit of a Slovenian tax number is never `0`, so `SI01234567` is no longer accepted.
+
+### 🔧 Maintenance
+
+* Test coverage for `BE`, `AT` and `SI` covering the accepted leading digits, lowercase input, surrounding spaces, wrong lengths and stray letters.
+
+The three patterns are now restrictive. Numbers accepted before and rejected now could never be issued, and the VIES existence check already discarded them in `validate()`, so only `validateFormat()` changes behaviour. If you cache validation results, consider invalidating the `BE`, `AT` and `SI` ones.
+
+**Full Changelog**: https://github.com/danielebarbaro/laravel-vat-eu-validator/compare/v3.4.1...v3.4.2
+
 ## Swiss VAT format fix - 2026-09-10
 
 ### 🐛 Fixes
