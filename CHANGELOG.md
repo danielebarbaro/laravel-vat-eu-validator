@@ -2,6 +2,22 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Irish VAT format fix - 2026-09-13
+
+### 🐛 Fixes
+
+* Old style `IE` numbers, whose second character is a `+` or a `*`, are now accepted. The `IE` pattern was `[A-Z\d]{8}|[A-Z\d]{9}`, which only checked the length and allowed neither character, so a number such as `IE1+23456A` was rejected.
+* The same pattern accepted numbers made only of digits (`IE12345678`) or only of letters (`IEABCDEFGH`). VIES issues neither, so both are now rejected. The pattern is now `\d{7}[A-W][A-IW]?|\d[A-Z+*]\d{5}[A-W]`, one branch per official format.
+
+### 🔧 Maintenance
+
+* Test coverage for `IE` covering both styles, the `+` and `*` variants, lowercase input, surrounding spaces, check letters out of range and wrong lengths.
+* The README validation section announced two rules instead of three, described `vat_number_exist` and `vat_number_format` incorrectly, and carried two examples that repeated the same array key three times, so only the last rule of each example was applied.
+
+Old style `IE` numbers were rejected before and are accepted now. Numbers made only of digits or only of letters were accepted before and are rejected now. If you cache validation results, consider invalidating the `IE` ones.
+
+**Full Changelog**: https://github.com/danielebarbaro/laravel-vat-eu-validator/compare/v3.4.2...v3.4.3
+
 ## Stricter BE, AT and SI patterns - 2026-09-13
 
 ### 🐛 Fixes
