@@ -12,7 +12,7 @@
     <a href="https://packagist.org/packages/danielebarbaro/laravel-vat-eu-validator"><img src="https://img.shields.io/packagist/dt/danielebarbaro/laravel-vat-eu-validator.svg?style=flat-square" alt="Total Downloads"></a>
 </p>
 
-laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
+laravel-vat-eu-validator is a package inspired by [vat.php](https://github.com/dannyvankooten/vat.php) to validate a VAT number for businesses based in Europe.
 
 #### For Laravel 10, 11, 12, 13 use tag 3.x
 
@@ -30,7 +30,7 @@ laravel-vat-eu-validator is a package inspired from [vat.php](https://github.com
 - **Strategy Pattern architecture**: ViesClientInterface interface with ViesSoapClient and ViesRestClient implementations
 - **Publishable configuration file**: choose which client to use and configure its parameters
 - **Restructured test suite**: separation between unit and functional tests
-- **PHP 8.4 e 8.5 support**
+- **PHP 8.4 and 8.5 support**
 
 ## Installation
 
@@ -125,7 +125,7 @@ You can adjust the timeout for API requests:
 use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValidator;
 
 // Check VAT format and VIES existence
-VatValidator::validate('IT12345');
+VatValidator::validate('IT12345678901');
 
 // Check VAT format
 VatValidator::validateFormat('IT12345678901'); 
@@ -136,19 +136,19 @@ VatValidator::validateExistence('IT12345678901');
 
 #### Validation
 
-The package registers two new validation rules.
+The package registers three new validation rules.
 
 **vat_number**
 
-The field under validation must be a valid and existing VAT number.
+The field under validation must be a correctly formatted VAT number that also exists in VIES.
 
 **vat_number_exist**
 
-The field under validation check id is an existing VAT number.
+The field under validation must be a VAT number that exists in VIES.
 
 **vat_number_format**
 
-The field under validation must be a valid VAT number.
+The field under validation must be a correctly formatted VAT number. VIES is not queried.
 
 ```php
 use Illuminate\Http\Request;
@@ -172,62 +172,40 @@ class Controller {
 }
 ```
 
-Alternatively, you can also use the `Rule` directly.
+Alternatively, import the rules instead of writing the fully qualified names.
 
 ```php
 use Illuminate\Http\Request;
-use Danielebarbaro\LaravelVatEuValidator\Rules;
+use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
+use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist;
+use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
 
 class Controller {
 
     public function foo(Request $request) 
     {
         $request->validate([
-            'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber() ],
-            'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist() ],
-            'bar_field' => [ new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat() ],
+            'bar_field' => [new VatNumber()],
+            'baz_field' => [new VatNumberExist()],
+            'qux_field' => [new VatNumberFormat()],
         ]);
     }
 }
 ```
 
-or
+Each rule can also be referenced by its string name.
 
 ```php
 use Illuminate\Http\Request;
-use Danielebarbaro\LaravelVatEuValidator\Rules;
 
 class Controller {
 
     public function foo(Request $request)
     {
         $request->validate([
-            'bar_field' => [
-                new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber(),
-                new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberExist(),
-                new \Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat(),
-            ],
-        ]);
-    }
-}
-```
-
-or
-
-```php
-use Illuminate\Http\Request;
-use Danielebarbaro\LaravelVatEuValidator\Rules;
-
-class Controller {
-
-    public function foo(Request $request)
-    {
-        $request->validate([
-            'bar_field' => [
-                'vat_number',
-                'vat_number_format',
-                'vat_number_exist',
-            ],
+            'bar_field' => ['vat_number'],
+            'baz_field' => ['vat_number_format'],
+            'qux_field' => ['vat_number_exist'],
         ]);
     }
 }
