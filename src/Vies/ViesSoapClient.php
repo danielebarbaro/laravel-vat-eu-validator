@@ -39,6 +39,11 @@ class ViesSoapClient implements ViesClientInterface
      */
     public function check(string $countryCode, string $vatNumber): bool
     {
+        // SoapClient applies connection_timeout to the connect phase only; reading
+        // the WSDL and the response is bounded by default_socket_timeout.
+        $previousSocketTimeout = ini_get('default_socket_timeout');
+        ini_set('default_socket_timeout', (string) $this->timeout);
+
         try {
             $response = $this->getClient()->checkVat(
                 [
@@ -48,6 +53,8 @@ class ViesSoapClient implements ViesClientInterface
             );
         } catch (SoapFault $soapFault) {
             throw new ViesException($soapFault->getMessage(), $soapFault->getCode());
+        } finally {
+            ini_set('default_socket_timeout', $previousSocketTimeout);
         }
 
         return $response->valid;

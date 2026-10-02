@@ -6,6 +6,7 @@ use Danielebarbaro\LaravelVatEuValidator\Facades\VatValidatorFacade as VatValida
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumberFormat;
 use Danielebarbaro\LaravelVatEuValidator\VatValidatorServiceProvider;
 use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class VatNumberFormatTest extends TestCase
 {
@@ -47,5 +48,30 @@ class VatNumberFormatTest extends TestCase
         $rule->validate('vat_number_format', $fake_vat, static function ($message): never {
             throw new \Exception($message);
         });
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function nonStringValues(): array
+    {
+        return [
+            'null' => [null],
+            'array' => [['IT00743110157']],
+            'integer' => [743110157],
+        ];
+    }
+
+    #[DataProvider('nonStringValues')]
+    public function testNonStringValueFailsWithoutCallingTheValidator(mixed $value): void
+    {
+        VatValidator::shouldReceive('validateFormat')->never();
+
+        $messages = [];
+        (new VatNumberFormat())->validate('vat_number_format', $value, static function (string $message) use (&$messages): void {
+            $messages[] = $message;
+        });
+
+        $this->assertSame([__('laravelVatEuValidator::validation.vat_number_format', ['attribute' => 'vat_number_format'])], $messages);
     }
 }
