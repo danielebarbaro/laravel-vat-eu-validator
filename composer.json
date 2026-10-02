@@ -39,6 +39,9 @@
         "phpunit/phpunit": "^11.5.50|^12.0|^13.0",
         "rector/rector": "^2.0"
     },
+    "suggest": {
+        "laravel/boost": "2.5 or higher reads the AI guidelines shipped in resources/boost"
+    },
     "autoload": {
         "psr-4": {
             "Danielebarbaro\\LaravelVatEuValidator\\": "src"
