@@ -260,6 +260,14 @@ $validator = new VatValidator(new ViesRestClient());
 ### If your tests reference `Vies\Client`
 Update references to `ViesSoapClient` or use `ViesClientInterface` for mocking.
 
+## AI guidelines (Laravel Boost)
+
+This package ships AI guidelines for [Laravel Boost](https://github.com/laravel/boost), at the path the Boost documentation gives package authors:
+
+- `resources/boost/guidelines/core.blade.php`, a short always in context brief on the three validation rules, the facade, choosing the SOAP or REST client, and handling a `ViesException` when VIES is unavailable.
+
+Install Boost 2.5 or higher with `composer require laravel/boost --dev` then `php artisan boost:install`, selecting this package when Boost asks which third party guidelines to install. On an app that already has Boost installed, `php artisan boost:update --discover` offers the newly detected package.
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
