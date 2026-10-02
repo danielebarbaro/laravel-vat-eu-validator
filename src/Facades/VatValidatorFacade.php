@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
  * @method bool validateExistence(string $vatNumber)
  * @method bool validate(string $vatNumber)
  * @method static int luhnCheck(string $vatNumber)
- * @method static string countryIsSupported(string $country)
+ * @method static bool countryIsSupported(string $country)
  */
 class VatValidatorFacade extends Facade
 {
