@@ -61,6 +61,12 @@ class ViesRestClient implements ViesClientInterface
             'vatNumber' => $vatNumber,
         ]);
 
+        // VIES can answer 2xx with valid=false while reporting that it could
+        // not check the number (MS_UNAVAILABLE, TIMEOUT, ...): that is not a verdict.
+        if (($data['actionSucceed'] ?? null) === false || ! empty($data['errorWrappers'])) {
+            throw new ViesException($this->formatErrorMessage($data));
+        }
+
         if (isset($data['valid'])) {
             return (bool) $data['valid'];
         }
