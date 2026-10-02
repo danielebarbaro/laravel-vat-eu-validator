@@ -79,6 +79,10 @@ return [
             'base_url' => ViesRestClient::BASE_URL,
         ],
     ],
+
+    // What the vat_number and vat_number_exist rules do when VIES cannot answer
+    // Available: 'throw', 'fail', 'pass'
+    'on_vies_failure' => env('VIES_ON_FAILURE', 'throw'), // Default: throw
 ];
 ```
 
@@ -118,6 +122,24 @@ You can adjust the timeout for API requests:
     ],
 ],
 ```
+
+For the SOAP client the timeout bounds both the connection and the wait for the response (it sets PHP's `default_socket_timeout` for the duration of the call, then restores it).
+
+#### Handling VIES failures in validation rules
+
+VIES is sometimes unreachable, slow, or answers that a member state is unavailable or busy (`MS_UNAVAILABLE`, `MS_MAX_CONCURRENT_REQ`, `TIMEOUT` and similar). Both clients report these cases with a `ViesException`. The `on_vies_failure` key, overridable with the `VIES_ON_FAILURE` env variable, decides what the `vat_number` and `vat_number_exist` rules do with it:
+
+- `throw` (default): the `ViesException` escapes the validator, as in previous versions.
+- `fail`: the rule fails with the `laravelVatEuValidator::validation.vies_unavailable` message ("The VIES service is unavailable, please try again later.").
+- `pass`: the rule passes. The format check still applies, so a badly formatted number still fails.
+
+```php
+'on_vies_failure' => 'fail',
+```
+
+`VatValidator::validate()` and `VatValidator::validateExistence()` ignore this setting and always throw the `ViesException`.
+
+The rules fail validation for values that are not strings (`null`, arrays, numbers) instead of throwing a `TypeError`.
 
 ## Usage
 
@@ -213,7 +235,7 @@ class Controller {
 
 ### Translations
 
-Most of the displayed strings are defined in the `vatEuValidator::validation` translation files. The package ships with a few supported locales, but if yours is not yet included we would greatly appreciate a PR.
+Most of the displayed strings are defined in the `laravelVatEuValidator::validation` translation files. The package ships with a few supported locales, but if yours is not yet included we would greatly appreciate a PR.
 
 If not already published, you can edit or fill the translation files using `php artisan vendor:publish --tag=laravel-vat-eu-validator-lang`, this will copy our translation files to your app's `vendor/laravelVatEuValidator` "lang" path.
 

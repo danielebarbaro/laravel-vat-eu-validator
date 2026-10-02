@@ -18,8 +18,8 @@ Three rules, available as string names or as rule objects:
 use Danielebarbaro\LaravelVatEuValidator\Rules\VatNumber;
 
 $request->validate([
-    'vat' => ['nullable', 'bail', 'string', new VatNumber()],
-    'vat_draft' => ['nullable', 'bail', 'string', 'vat_number_format'],
+    'vat' => ['nullable', new VatNumber()],
+    'vat_draft' => ['nullable', 'vat_number_format'],
 ]);
 </code-snippet>
 @endverbatim
@@ -29,12 +29,13 @@ uses `EL`, Northern Ireland `XI`; `GB` and `CH` are accepted by the format
 check. Leading and trailing spaces are trimmed and the value is uppercased,
 inner spaces and dots are not removed, so normalise user input first.
 
-The rules pass the value straight to a `string` parameter: `null` or an array
-throws a `TypeError` instead of failing validation. Keep `nullable` and
-`bail` plus `string` in front of them, as above.
+A value that is not a string (`null`, an array, a number) fails the rule with
+its normal message, it does not throw. Add `nullable` when the field is
+optional, as above.
 
 Messages live under `laravelVatEuValidator::validation.vat_number` (and
-`.vat_number_format`, `.vat_number_exist`). Publish them with
+`.vat_number_format`, `.vat_number_exist`, and
+`laravelVatEuValidator::validation.vies_unavailable` for VIES outages). Publish them with
 `php artisan vendor:publish --tag=laravel-vat-eu-validator-lang`.
 
 ### Facade and service
@@ -56,16 +57,21 @@ as a singleton. It can be type hinted instead of using the facade.
 ### When VIES fails
 
 There is no caching and no retry. When VIES cannot be reached, times out or
-answers with a fault, `validate()` and `validateExistence()` throw
-`Danielebarbaro\LaravelVatEuValidator\Vies\ViesException`, and so do the
-`vat_number` and `vat_number_exist` rules: the exception escapes the
-validator, it is not turned into a validation error. Catch it where an
-outage must not block the user, for example fall back to
-`VatValidator::validateFormat()` and check again later. Cache results in the
-application if needed.
+cannot give a verdict (member state unavailable, too many concurrent
+requests), both clients throw
+`Danielebarbaro\LaravelVatEuValidator\Vies\ViesException`. The REST client
+does so even when the response also carries `valid` false, so false always
+means the number is not registered.
 
-With the REST client, a successful response whose `valid` field is false
-returns false, whatever the reason VIES gives.
+`validate()` and `validateExistence()` always throw it. For the `vat_number`
+and `vat_number_exist` rules, `vat-validator.on_vies_failure` decides:
+
+- `throw` (default): the exception escapes the validator, it is not turned into a validation error. Catch it where an outage must not block the user.
+- `fail`: the rule fails with the `vies_unavailable` message, so the user can retry.
+- `pass`: the rule passes; the format check still applies. Check the number again later, for example with `VatValidator::validateExistence()` in a queued job.
+
+The `VIES_ON_FAILURE` env variable overrides it. Cache results in the
+application if needed.
 
 ### Choosing the VIES client
 
@@ -74,9 +80,10 @@ Publish the config with
 `config/vat-validator.php`:
 
 - `vat-validator.client`: `soap` (default, `ViesSoapClient::CLIENT_NAME`) or `rest` (`ViesRestClient::CLIENT_NAME`). Any other value throws `InvalidArgumentException` when the validator is resolved.
-- `vat-validator.clients.soap.timeout`: seconds, passed to `SoapClient` as `connection_timeout`, so it limits the connection only. Needs `ext-soap`.
+- `vat-validator.clients.soap.timeout`: seconds, bounds the connection (`connection_timeout`) and the wait for the response (`default_socket_timeout`, set for the call and restored afterwards). Needs `ext-soap`.
 - `vat-validator.clients.rest.timeout`: seconds, the timeout of the whole HTTP request.
 - `vat-validator.clients.rest.base_url`: defaults to `ViesRestClient::BASE_URL`, overridable with the `VIES_REST_BASE_URL` env variable.
+- `vat-validator.on_vies_failure`: `throw` (default), `fail` or `pass`, see above.
 
 @verbatim
 <code-snippet name="Switch to the REST client" lang="php">
