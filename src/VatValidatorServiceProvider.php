@@ -9,8 +9,10 @@ use Danielebarbaro\LaravelVatEuValidator\Vies\ViesClientInterface;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesRestClient;
 use Danielebarbaro\LaravelVatEuValidator\Vies\ViesSoapClient;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Validator as ValidatorInstance;
 
 class VatValidatorServiceProvider extends ServiceProvider
 {
@@ -24,20 +26,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend(
             'vat_number',
-            static function ($attribute, $value, $parameters, $validator): bool {
-                $passed = true;
-                $rule = new VatNumber();
-
-                $rule->validate(
-                    $attribute,
-                    $value,
-                    static function (?string $message = null) use (&$passed): void {
-                        $passed = false;
-                    }
-                );
-
-                return $passed;
-            }
+            static fn (string $attribute, mixed $value, array $parameters, ValidatorInstance $validator): bool => self::passes('vat_number', new VatNumber(), $attribute, $value, $validator)
         );
 
         Validator::replacer(
@@ -51,20 +40,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend(
             'vat_number_exist',
-            static function ($attribute, $value, $parameters, $validator): bool {
-                $passed = true;
-                $rule = new VatNumberExist();
-
-                $rule->validate(
-                    $attribute,
-                    $value,
-                    static function (?string $message = null) use (&$passed): void {
-                        $passed = false;
-                    }
-                );
-
-                return $passed;
-            }
+            static fn (string $attribute, mixed $value, array $parameters, ValidatorInstance $validator): bool => self::passes('vat_number_exist', new VatNumberExist(), $attribute, $value, $validator)
         );
 
         Validator::replacer(
@@ -78,20 +54,7 @@ class VatValidatorServiceProvider extends ServiceProvider
          */
         Validator::extend(
             'vat_number_format',
-            static function ($attribute, $value, $parameters, $validator): bool {
-                $passed = true;
-                $rule = new VatNumberFormat();
-
-                $rule->validate(
-                    $attribute,
-                    $value,
-                    static function (?string $message = null) use (&$passed): void {
-                        $passed = false;
-                    }
-                );
-
-                return $passed;
-            }
+            static fn (string $attribute, mixed $value, array $parameters, ValidatorInstance $validator): bool => self::passes('vat_number_format', new VatNumberFormat(), $attribute, $value, $validator)
         );
 
         Validator::replacer(
@@ -113,6 +76,32 @@ class VatValidatorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/vat-validator.php' => config_path('vat-validator.php'),
         ], 'laravel-vat-eu-validator-config');
+    }
+
+    /**
+     * Run a rule object for its string counterpart. When VIES is unavailable
+     * and the rule fails because of it, show the dedicated message instead of
+     * the rule's default one.
+     */
+    private static function passes(string $ruleName, ValidationRule $rule, string $attribute, mixed $value, ValidatorInstance $validator): bool
+    {
+        $passed = true;
+
+        $rule->validate(
+            $attribute,
+            $value,
+            static function (?string $message = null) use (&$passed): void {
+                $passed = false;
+            }
+        );
+
+        if (! $passed && ($rule instanceof VatNumber || $rule instanceof VatNumberExist) && $rule->failedBecauseViesIsUnavailable()) {
+            $validator->setCustomMessages([
+                "{$attribute}.{$ruleName}" => __('laravelVatEuValidator::validation.vies_unavailable'),
+            ]);
+        }
+
+        return $passed;
     }
 
     /**
