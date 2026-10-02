@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-vat-eu-validator` will be documented in this file
 
+## Laravel Boost guidelines - 2026-10-02
+
+### ✨ New
+
+* AI guidelines for [Laravel Boost](https://github.com/laravel/boost) in `resources/boost/guidelines/core.blade.php`. They cover the three validation rules, the facade, the SOAP and REST client configuration and how VIES failures surface. Boost picks them up on `php artisan boost:install`, or on `php artisan boost:update --discover` in an app that already uses it. `laravel/boost` is only suggested, never required.
+
+### 🔧 Maintenance
+
+* A drift test checks every class, method, config key, env variable, rule name, translation key and publish tag named in the guidelines against the code, so a rename that leaves them stale fails CI.
+
+No runtime code changed.
+
+**Full Changelog**: https://github.com/danielebarbaro/laravel-vat-eu-validator/compare/v3.4.3...v3.5.0
+
 ## Irish VAT format fix - 2026-09-13
 
 ### 🐛 Fixes
@@ -232,6 +246,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 
 
+
 ```
 ##### If you want to switch to the REST client
 
@@ -240,6 +255,7 @@ $validator = new VatValidator(new ViesRestClient());
 
 ```php
 'client' => ViesRestClient::CLIENT_NAME,
+
 
 
 
